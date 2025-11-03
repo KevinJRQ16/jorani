@@ -1,5 +1,6 @@
 // pages/LeavesPage.js
 import { expect } from "@playwright/test";
+import test from "node:test";
 
 export class LeavesPage {
   constructor(page) {
@@ -47,7 +48,8 @@ export class LeavesPage {
         text.includes("The leave request has been successfully cancelled") ||
         text.includes("The reminder email was sent to the manager") ||
         text.includes("The leave request has been successfully updated") ||
-        text.includes("This leave type already exists.")
+        text.includes("This leave type already exists.") ||
+        text.includes("The leave request has been successfully created")
       );
     } catch {
       return false;

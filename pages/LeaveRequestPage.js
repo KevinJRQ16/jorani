@@ -93,7 +93,7 @@ export class LeaveRequestPage {
   }
 
   async submitPlanned() {
-    await this.page.click(this.plannedButton);
+    await this.page.dblclick(this.plannedButton);
   }
 
   async submitRequested() {
