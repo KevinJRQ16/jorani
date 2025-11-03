@@ -6,9 +6,7 @@
   "directories": {
     "test": "tests"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/KevinJRQ16/jorani.git"
@@ -22,6 +20,12 @@
   "homepage": "https://github.com/KevinJRQ16/jorani#readme",
   "devDependencies": {
     "@playwright/test": "^1.56.1",
+    "@types/node": "^24.9.2",
+    "allure-playwright": "^3.4.2",
     "dotenv": "^17.2.3"
+  },
+  "dependencies": {
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   }
 }

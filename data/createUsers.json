@@ -1,0 +1,27 @@
+{
+    "passwordCreateUser": {
+        "password": "campoObligatorio"
+    },
+    "emailCreateUser": {
+        "email": "emailObligatorio"
+    },
+    "loginCreateUser": {
+        "login": "usernameObligatorio"
+    },
+    "lastnameCreateUser": {
+        "lastname": "campoObligatorio"
+    },
+    "firstnameCreateUser": {
+        "firstname": "campoObligatorio"
+    },
+    "invalidEmailWhitoutArroba": {
+        "email": "emailInvalido"
+    },
+    "invalidEmailUser": {
+    "firstname": "Skynet",
+    "lastname": "Ramos",
+    "login": "sky001",
+    "email": "correo", 
+    "password": "holamundo"
+  }
+}
