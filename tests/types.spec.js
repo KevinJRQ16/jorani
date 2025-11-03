@@ -3,7 +3,7 @@ import { test } from "../fixtures/fixtures.js";
 import { HomePage } from "../pages/HomePage.js";
 import { LeaveTypesPage } from "../pages/LeaveTypesPage.js";
 
-test("@ui Verificar que se pueda crear un tipo", async ({ loggedInPage, cleanupLeaveType }) => {
+test("@ui @positive Verificar que se pueda crear un tipo", async ({ loggedInPage, cleanupLeaveType }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 
@@ -15,7 +15,7 @@ test("@ui Verificar que se pueda crear un tipo", async ({ loggedInPage, cleanupL
   expect(hasMessage).toBeTruthy();
 });
 
-test("@ui Verificar que se pueda eliminar un tipo", async ({ loggedInPage, setupLeaveType }) => {
+test("@ui @positive Verificar que se pueda eliminar un tipo", async ({ loggedInPage, setupLeaveType }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 
@@ -28,7 +28,7 @@ test("@ui Verificar que se pueda eliminar un tipo", async ({ loggedInPage, setup
   expect(hasMessage).toBeTruthy();
 });
 
-test("@ui Verificar que se pueda editar un tipo", async ({ loggedInPage }) => {
+test("@ui @positive Verificar que se pueda editar un tipo", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 
@@ -40,7 +40,7 @@ test("@ui Verificar que se pueda editar un tipo", async ({ loggedInPage }) => {
   expect(hasMessage).toBeTruthy();
 });
 
-test("@ui Verificar que no se pueda crear un tipo duplicado", async ({ loggedInPage }) => {
+test("@ui @negative Verificar que no se pueda crear un tipo duplicado", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 
@@ -53,7 +53,7 @@ test("@ui Verificar que no se pueda crear un tipo duplicado", async ({ loggedInP
   expect(hasDuplicate).toBeTruthy();
 });
 
-test("@ui Verificar que se pueda exportar la lista de tipos", async ({ loggedInPage }) => {
+test("@ui @positive Verificar que se pueda exportar la lista de tipos", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 
@@ -64,7 +64,7 @@ test("@ui Verificar que se pueda exportar la lista de tipos", async ({ loggedInP
   console.log("archivo exportado correctamente:", filePath);
 });
 
-test("@ui Verificar que al eliminar un tipo no aparezca nuevamente en la lista", async ({ loggedInPage, setupLeaveType }) => {
+test("@ui @positive Verificar que al eliminar un tipo no aparezca nuevamente en la lista", async ({ loggedInPage, setupLeaveType }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
   const createdName = setupLeaveType;
@@ -80,7 +80,7 @@ test("@ui Verificar que al eliminar un tipo no aparezca nuevamente en la lista",
   expect(stillExists).toBeFalsy();
 });
 
-test("@ui Verificar que se pueda crear tipo de permiso sin marcar 'Deduct non working days'", async ({ loggedInPage, cleanupLeaveType }) => {
+test("@ui @positive Verificar que se pueda crear tipo de permiso sin marcar 'Deduct non working days'", async ({ loggedInPage, cleanupLeaveType }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 
@@ -91,7 +91,7 @@ test("@ui Verificar que se pueda crear tipo de permiso sin marcar 'Deduct non wo
   expect(hasMessage).toBeTruthy();
 });
 
-test("@ui Verificar que se pueda cerrar el modal de crear tipo con el botón Cancel", async ({ loggedInPage }) => { 
+test("@ui @positive Verificar que se pueda cerrar el modal de crear tipo con el botón Cancel", async ({ loggedInPage }) => { 
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 
@@ -104,7 +104,7 @@ test("@ui Verificar que se pueda cerrar el modal de crear tipo con el botón Can
 });
 
 
-test.fail("@ui Verificar que no se pueda crear tipo de permiso sin campos vacios", async ({ loggedInPage }) => {
+test.fail("@ui @negative Verificar que no se pueda crear tipo de permiso sin campos vacios", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 
@@ -116,7 +116,7 @@ test.fail("@ui Verificar que no se pueda crear tipo de permiso sin campos vacios
 
 });
 
-test("@ui Verificar que se pueda crear tipo de permiso marcando 'Deduct non working days'", async ({ loggedInPage, cleanupLeaveType }) => {
+test("@ui @positive Verificar que se pueda crear tipo de permiso marcando 'Deduct non working days'", async ({ loggedInPage, cleanupLeaveType }) => {
   const home = new HomePage(loggedInPage);
   const leaveTypes = new LeaveTypesPage(loggedInPage);
 

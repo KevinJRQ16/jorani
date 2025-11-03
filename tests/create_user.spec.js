@@ -27,7 +27,7 @@ test("@ui @positive Verificar que se pueda crear un usuario exitosamente", async
   expect(success).toBeTruthy();
 });
   
-test.fail("@ui Verificar que el sistema no acepte correos sin @", async ({ loggedInPage, cleanupUltimoUsuario }) => {
+test.fail("@ui @negative Verificar que el sistema no acepte correos sin @", async ({ loggedInPage, cleanupUltimoUsuario }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
@@ -44,7 +44,7 @@ test.fail("@ui Verificar que el sistema no acepte correos sin @", async ({ logge
   expect(await usersPage.hasSuccessMessage()).toBeTruthy();
 });
 
-test("@ui Verificar que el campo contrasenia sea un campo obligatorio", async ({ loggedInPage }) => {
+test("@ui @negative Verificar que el campo contrasenia sea un campo obligatorio", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   await home.goToCrearUsuario();
@@ -54,7 +54,7 @@ test("@ui Verificar que el campo contrasenia sea un campo obligatorio", async ({
   await expect(message).toContain("The field password is mandatory.");
 });
 
-test("@ui Verificar que el campo email sea un campo obligatorio", async ({ loggedInPage }) => {
+test("@ui @negative Verificar que el campo email sea un campo obligatorio", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   await home.goToCrearUsuario();
@@ -62,7 +62,7 @@ test("@ui Verificar que el campo email sea un campo obligatorio", async ({ logge
   await expect(message).toContain("The field email is mandatory.");
 });
 
-test("@ui Verificar que el campo login sea un campo obligatorio", async ({ loggedInPage }) => {
+test("@ui @negative Verificar que el campo login sea un campo obligatorio", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   await home.goToCrearUsuario();
@@ -70,8 +70,8 @@ test("@ui Verificar que el campo login sea un campo obligatorio", async ({ logge
   await expect(message).toContain("The field login is mandatory.");
 
 });
+test("@ui @positive Verificar que se pueda crear un usuario seleccionado el primer manager", async ({ loggedInPage, cleanupUltimoUsuario }) => {
 
-test("@ui Verificar que se pueda crear un usuario seleccionado el primer manager", async ({ loggedInPage, cleanupUltimoUsuario }) => {
   const home = new HomePage(loggedInPage);
   const users = new UsersPage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
@@ -93,7 +93,7 @@ test("@ui Verificar que se pueda crear un usuario seleccionado el primer manager
   expect(success).toBeTruthy();
 });
 
-test("@ui Verificar que el campo apellido sea un campo obligatorio", async ({ loggedInPage }) => {
+test("@ui @negative Verificar que el campo apellido sea un campo obligatorio", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   await home.goToCrearUsuario();
@@ -102,7 +102,7 @@ test("@ui Verificar que el campo apellido sea un campo obligatorio", async ({ lo
   await expect(message).toContain("The field lastname is mandatory.");
 });
 
-test("@ui Verificar que el campo nombre sea un campo obligatorio", async ({ loggedInPage }) => {
+test("@ui @negative Verificar que el campo nombre sea un campo obligatorio", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   await home.goToCrearUsuario();
@@ -111,7 +111,7 @@ test("@ui Verificar que el campo nombre sea un campo obligatorio", async ({ logg
   await expect(message).toContain("The field firstname is mandatory.");
 });
 
-test("@ui Verificar que se pueda crear un usuario con campos opciones", async ({ loggedInPage, cleanupUltimoUsuario}) => {
+test("@ui @positive Verificar que se pueda crear un usuario con campos opciones", async ({ loggedInPage, cleanupUltimoUsuario}) => {
   const home = new HomePage(loggedInPage);
   const users = new UsersPage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
@@ -134,7 +134,7 @@ test("@ui Verificar que se pueda crear un usuario con campos opciones", async ({
   expect(success).toBeTruthy();
 });
 
-test("@ui Verificar que se pueda crear un usuario con todos los campos completados correctamente", async ({ loggedInPage, cleanupUltimoUsuario }) => {
+test("@ui @positive Verificar que se pueda crear un usuario con todos los campos completados correctamente", async ({ loggedInPage, cleanupUltimoUsuario }) => {
   const home = new HomePage(loggedInPage);
   const users = new UsersPage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
@@ -159,7 +159,7 @@ test("@ui Verificar que se pueda crear un usuario con todos los campos completad
   expect(success).toBeTruthy();
 });
 
-test("@ui Verificar que el modal de seleccionar manager se cierre al hacer clic en la X", async ({ loggedInPage }) => {
+test("@ui @positive Verificar que el modal de seleccionar manager se cierre al hacer clic en la X", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   await home.goToCrearUsuario();
@@ -170,7 +170,7 @@ test("@ui Verificar que el modal de seleccionar manager se cierre al hacer clic 
   expect(isVisible).toBeFalsy();
 });
 
-test("@ui Verificar que el modal de seleccionar manager se cierre al hacer clic en Cancel", async ({ loggedInPage }) => {
+test("@ui @positive Verificar que el modal de seleccionar manager se cierre al hacer clic en Cancel", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   await home.goToCrearUsuario();
@@ -181,7 +181,7 @@ test("@ui Verificar que el modal de seleccionar manager se cierre al hacer clic 
   expect(isVisible).toBeFalsy();
 });
 
-test("@ui Verificar que el buscador dentro del modal de manager filtre los resultados correctamente", async ({ loggedInPage }) => {
+test("@ui @positive Verificar que el buscador dentro del modal de manager filtre los resultados correctamente", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   await home.goToCrearUsuario();
@@ -191,7 +191,7 @@ test("@ui Verificar que el buscador dentro del modal de manager filtre los resul
   expect(results.some(r => r.toLowerCase().includes("balet"))).toBeTruthy();
 });
 
-test("@ui Verificar que se pueda seleccionar una entidad desde el modal y se complete el campo", async ({ loggedInPage }) => {
+test("@ui @positive Verificar que se pueda seleccionar una entidad desde el modal y se complete el campo", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
 
@@ -202,7 +202,7 @@ test("@ui Verificar que se pueda seleccionar una entidad desde el modal y se com
   expect(selectedEntity).not.toBe("");
 });
 
-test("@ui Verificar que al cancelar el modal de entidad no se complete el campo", async ({ loggedInPage }) => {
+test("@ui @negative Verificar que al cancelar el modal de entidad no se complete el campo", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
 
