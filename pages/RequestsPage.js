@@ -52,6 +52,11 @@ export class RequestsPage {
     //search
     this.searchInput = "#leaves_filter input[type='search']";
 
+    this.tableHeader = `${this.requestsTable} thead`;
+
+    this.emptyRow = ".dataTables_empty";
+
+    this.tableRows = "#leaves tbody tr";
 
 
   }
@@ -61,16 +66,21 @@ export class RequestsPage {
     await this.page.waitForSelector(this.requestsTable);
   }
 
-  // //filtros
-  // async filterByType(typeText) {
-  //   await this.page.selectOption(this.leaveTypeSelect, { label: typeText });
-  // }
+  async sortBy(columnName) {
+    const column = this.page.locator(`${this.tableHeader} th`, { hasText: columnName });
+
+    await column.first().waitFor({ state: "visible" });
+
+    await column.first().dblclick();
+
+    await this.page.waitForSelector(`${this.requestsTable} tbody tr`, { state: "visible" });
+  }
+
   async filterByType(typeText) {
     const select = this.page.locator(this.leaveTypeSelect);
     await select.waitFor({ state: "visible" });
     await select.selectOption({ label: typeText });
 
-    //dispara manualmente el evento "change" jorani lo usa para recargar la tabla
     await this.page.evaluate((selector) => {
       const el = document.querySelector(selector);
       el && el.dispatchEvent(new Event("change", { bubbles: true }));
@@ -96,13 +106,7 @@ export class RequestsPage {
   }
 
   async getFirstRequestId() {
-    // // return await this.page.locator(`${this.requestRows} td a`).first().innerText();
-    // const id = await this.page.locator(`${this.requestRows} td:first-child`).first().innerText();
-    // return id.trim();
-    // Espera a que al menos una fila esté visible
     await this.page.waitForSelector(`${this.requestsTable} tbody tr`, { state: "visible" });
-
-    //toma el texto de la primera celda (columna ID) de la primera fila de la tabla
     const firstRow = this.page.locator(`${this.requestsTable} tbody tr`).first();
     const firstIdCell = firstRow.locator("td").first();
     const id = await firstIdCell.innerText();
@@ -113,9 +117,9 @@ export class RequestsPage {
 
   async acceptFirstRequest() {
     await this.page.locator(this.acceptLink).first().click();
-    await this.page.waitForSelector(this.flashMessage);
-    const message = await this.page.locator(this.flashMessage).innerText();
-    return message;
+    // await this.page.waitForSelector(this.flashMessage);
+    // const message = await this.page.locator(this.flashMessage).innerText();
+    // return message;
   }
 
   async rejectFirstRequest(commentText = "Reason for rejection") {
@@ -123,9 +127,9 @@ export class RequestsPage {
     await this.page.waitForSelector(this.commentModal);
     await this.page.fill(this.commentInput, commentText);
     await this.page.click(this.commentRejectButton);
-    await this.page.waitForSelector(this.flashMessage);
-    const message = await this.page.locator(this.flashMessage).innerText();
-    return message;
+    // await this.page.waitForSelector(this.flashMessage);
+    // const message = await this.page.locator(this.flashMessage).innerText();
+    // return message;
   }
 
   async cancelRejection() {
@@ -262,8 +266,17 @@ export class RequestsPage {
 
   async searchLeave(term) {
     await this.page.fill(this.searchInput, term);
-    // await this.page.waitForTimeout(5000); // esperar el refresco de la tabla
-    await this.page.waitForSelector("#leaves tbody tr", { state: "visible" });
+    await this.page.waitForTimeout(1000); // esperar el refres de la tabla
+    // await this.page.waitForSelector("#leaves tbody tr", { state: "visible" });
+  }
+
+  async getRowCount() {
+    return await this.page.locator(`${this.requestsTable} tbody tr`).count();
+  }
+
+  async getInfoTextSearch() {
+    // return await this.page.locator(this.infoText).innerText();
+    return (await this.page.textContent(this.emptyRow)).trim();
   }
 
   async getFirstRowText() {
@@ -279,6 +292,66 @@ export class RequestsPage {
       data.push(rowText);
     }
     return data;
+  }
+
+  async isCommentModalVisible() {
+    return await this.page.locator(this.commentModal).isVisible();
+  }
+
+  async isTableVisible() {
+    return await this.page.locator(this.requestsTable).isVisible();
+  }
+
+  async areAllFiltersVisible() {
+    const filters = [
+      this.leaveTypeSelect,
+      this.chkPlanned,
+      this.chkAccepted,
+      this.chkRequested,
+      this.chkRejected,
+      this.chkCancellation,
+      this.chkCanceled
+    ];
+
+    for (const selector of filters) {
+      const element = this.page.locator(selector);
+      const visible = await element.isVisible();
+      if (!visible) return false; 
+    }
+
+    return true;
+  }
+
+
+  async hasSuccessMessage() {
+    try {
+      const alert = await this.page.waitForSelector(this.flashMessage, { timeout: 5000 });
+      const text = (await alert.innerText()).trim();
+      return (
+        text.includes("The leave request has been successfully accepted.") ||
+        text.includes("The reminder email was sent to the manager") ||
+        text.includes("The leave request has been successfully updated") ||
+        text.includes("The leave request has been successfully rejected.")
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  async getAllVisibleRequests() {
+    await this.page.waitForSelector(this.requestsTable);
+
+    const rows = this.page.locator(this.requestRows);
+    const rowCount = await rows.count();
+
+    const allRequests = [];
+
+    for (let i = 0; i < rowCount; i++) {
+      const rowCells = await rows.nth(i).locator("td").allInnerTexts();
+      allRequests.push(rowCells.map(cell => cell.trim()));
+    }
+
+    return allRequests;
   }
 
 }

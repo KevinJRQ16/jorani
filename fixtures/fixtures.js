@@ -36,29 +36,54 @@ export const test = base.extend({
     // await context.close();
   },
 
+  // createdRequest: async ({ loggedInPage }, use) => {
+  //   const home = new HomePage(loggedInPage);
+  //   const leaveRequestPage = new LeaveRequestPage(loggedInPage);
+  //   const requestsPage = new RequestsPage(loggedInPage);
+
+  //   // Ir a crear una solicitud
+  //   await loggedInPage.goto("http://localhost/leaves/create");
+  //   await loggedInPage.waitForSelector(leaveRequestPage.leaveTypeSelect);
+
+  //   // Crear solicitud básica (tipo: Annual Leave)
+  //   await leaveRequestPage.selectLeaveType("paid leave");
+  //   await leaveRequestPage.selectStartDate();
+  //   await leaveRequestPage.selectEndDate();
+  //   await leaveRequestPage.setCause("Motivo automático de prueba1");
+  //   await leaveRequestPage.submitRequested();
+
+  //   await loggedInPage.waitForSelector("#flashbox");
+  //   await loggedInPage.waitForTimeout(1000);
+
+  //   await home.goToRequests();
+  //   await loggedInPage.waitForURL("**/requests");
+
+  //   await use(requestsPage);
+  // },
+
   createdRequest: async ({ loggedInPage }, use) => {
     const home = new HomePage(loggedInPage);
     const leaveRequestPage = new LeaveRequestPage(loggedInPage);
     const requestsPage = new RequestsPage(loggedInPage);
 
-    // Ir a crear una solicitud
     await loggedInPage.goto("http://localhost/leaves/create");
-    await loggedInPage.waitForSelector(leaveRequestPage.leaveTypeSelect);
 
-    // Crear solicitud básica (tipo: Annual Leave)
     await leaveRequestPage.selectLeaveType("paid leave");
     await leaveRequestPage.selectStartDate();
     await leaveRequestPage.selectEndDate();
-    await leaveRequestPage.setCause("Motivo automático de prueba");
+    await leaveRequestPage.setCause("Motivo automático de prueba5");
     await leaveRequestPage.submitRequested();
 
     await loggedInPage.waitForSelector("#flashbox");
-    await loggedInPage.waitForTimeout(1000);
 
-    await home.goToRequests();
-    await loggedInPage.waitForURL("**/requests");
+    // Ir a la lista y obtener la última solicitud
+    // await home.goToRequests();
+    // await loggedInPage.waitForSelector(requestsPage.requestsTable);
 
-    await use(requestsPage);
+    // const lastRequest = await requestsPage.getLatestRequest(); // 👈 nuevo método
+    // console.log(lastRequest);
+    // await use({ requestsPage, lastRequest });
+    await use();
   },
 
   usuarioDePrueba: async ({ loggedInPage }, use) => {

@@ -460,7 +460,7 @@ async toggleActiveByIndex(index = 1) {
 // async handleAjaxErrorModal() {
 //   const ajaxErrorModal = this.page.locator(".bootbox.modal .modal-body", { hasText: "Unexpected Ajax Error" });
 //   if (await ajaxErrorModal.isVisible({ timeout: 3000 })) {
-//     console.log("⚠️ Modal AJAX detectado, refrescando página...");
+//     console.log("modal AJAX detectado, refrescando página...");
 //     await this.page.reload();
 //     await this.page.waitForLoadState("domcontentloaded");
 //   }
@@ -484,13 +484,13 @@ async eliminarUltimoUsuario() {
   const count = await rows.count();
 
   if (count === 0) {
-    console.log("⚠️ No hay usuarios para eliminar.");
+    console.log("no hay usuarios para eliminar.");
     return false;
   }
 
   const lastRow = rows.nth(count - 1);
   const login = await lastRow.locator("td:nth-child(3)").innerText();
-  console.log(`🧹 Eliminando último usuario con login: ${login}`);
+  console.log(`eliminando último usuario con login: ${login}`);
 
   // Click en el botón eliminar
   const deleteButton = lastRow.locator("a.confirm-delete");
@@ -501,7 +501,7 @@ async eliminarUltimoUsuario() {
   await this.page.click(`${this.deleteModal} #action-delete`);
   await this.page.waitForSelector(this.deleteModal, { state: "hidden", timeout: 10000 });
 
-  console.log("✅ Usuario eliminado correctamente.");
+  console.log("usuario eliminado correctamente.");
   return true;
 }
 
