@@ -25,8 +25,8 @@ jobs:
         docker build -t jorani-custom .
         docker run -d -p 8080:80 jorani-custom
 
-    - name: Wait for Jorani to be ready
-      run: npx wait-on http://localhost:8080
+    # - name: Wait for Jorani to be ready
+    #   run: npx wait-on http://localhost:8080
 
     - name: Run Playwright tests
       run: npx playwright test
