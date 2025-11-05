@@ -18,10 +18,12 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
-    - name: Start Jorani container
+    - name: Build Jorani image
       run: |
-        docker run -d -p 8080:80 ghcr.io/jorani/jorani:latest
-        sleep 20
+        git clone https://github.com/bbalet/jorani.git
+        cd jorani
+        docker build -t jorani-custom .
+        docker run -d -p 8080:80 jorani-custom
 
     - name: Wait for Jorani to be ready
       run: npx wait-on http://localhost:8080
