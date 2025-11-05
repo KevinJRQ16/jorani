@@ -12,3 +12,7 @@ package-lock.json
 /data/testdata.db/
 allure-report/
 allure-results/
+
+logs/
+
+reportes/screenshots/
