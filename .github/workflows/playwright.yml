@@ -17,6 +17,15 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+
+    - name: Start Jorani container
+      run: |
+        docker run -d -p 8080:80 ghcr.io/jorani/jorani:latest
+        sleep 20
+
+    - name: Wait for Jorani to be ready
+      run: npx wait-on http://localhost:8080
+
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v4
