@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Playwright CI with Jorani
 on:
   push:
     branches: [ main, master ]
@@ -22,12 +22,14 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chrome
 
-      - name: Copy Jorani Dockerfile
+      - name: Prepare Jorani environment
         run: |
           git clone https://github.com/bbalet/jorani.git
           cp jorani/Dockerfile .
-          cp -r jorani/docker .  
-        
+          cp -r jorani/docker .
+          # fix: remove composer.lock reference that breaks build
+          sed -i 's/composer\.json composer\.lock/composer.json/' Dockerfile
+
       - name: Build and start Jorani (Docker Compose)
         run: |
           docker compose build
