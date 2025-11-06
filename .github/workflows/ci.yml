@@ -1,0 +1,55 @@
+name: CI - Playwright con Jorani
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      jorani:
+        image: bbalet/jorani:latest     
+        ports:
+          - 8080:80
+        options: >-
+          --health-cmd="curl -f http://localhost/session/login || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: instalar dependencias
+        run: npm ci
+
+      - name: esperar a que Jorani esté listo
+        run: |
+          echo "Esperando que el contenedor de Jorani se levante..."
+          for i in {1..30}; do
+            curl -sSf http://localhost:8080/session/login && break
+            echo "Jorani no listo todavía... ($i/30)"
+            sleep 5
+          done
+
+      - name: ejecutar tests Playwright
+        env:
+          JORANI_URL: http://localhost:8080
+        run: npx playwright test
+
+      - name: guardar reporte HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
