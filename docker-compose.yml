@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: jorani
+      MYSQL_USER: jorani
+      MYSQL_PASSWORD: jorani
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+  web:
+    image: bbalet/jorani:latest
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=jorani
+      - DB_PASSWORD=jorani
+      - DB_NAME=jorani
