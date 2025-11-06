@@ -1,53 +1,78 @@
-name: CI - Playwright con Jorani
+name: CI - Playwright Jorani
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     services:
-      jorani:
-        image: bbalet/jorani:latest     
+      db:
+        image: mysql:5.7
         ports:
-          - 8080:80
+          - 3306:3306
+        env:
+          MYSQL_DATABASE: jorani
+          MYSQL_USER: jorani
+          MYSQL_PASSWORD: jorani
+          MYSQL_ROOT_PASSWORD: root
         options: >-
-          --health-cmd="curl -f http://localhost/session/login || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=5
 
     steps:
-      - name: clonar el repositorio
+      - name: Checkout your test framework
         uses: actions/checkout@v4
 
-      - name: configurar Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: instalar dependencias
+      - name: Install dependencies
         run: npm ci
 
-      - name: esperar a que Jorani esté listo
+      - name: Clone Jorani from GitHub
         run: |
-          echo "Esperando que el contenedor de Jorani se levante..."
+          git clone https://github.com/bbalet/jorani.git
+          cd jorani
+          docker build -t jorani-custom .
+
+      - name: Run Jorani container
+        run: |
+          docker run -d --name jorani-web \
+            -p 8080:80 \
+            --link ${{ job.services.db.id }}:db \
+            -e DB_HOST=db \
+            -e DB_USER=jorani \
+            -e DB_PASSWORD=jorani \
+            -e DB_NAME=jorani \
+            jorani-custom
+
+      - name: Wait for Jorani to be ready
+        run: |
+          echo "Esperando que Jorani esté listo..."
           for i in {1..30}; do
-            curl -sSf http://localhost:8080/session/login && break
-            echo "Jorani no listo todavía... ($i/30)"
+            if curl -s http://localhost:8080/session/login | grep -q "Login"; then
+              echo "jorani está listo"
+              exit 0
+            fi
+            echo "esperando 5s..."
             sleep 5
           done
+          echo "jorani no levantó a tiempo"
+          exit 1
 
-      - name: ejecutar tests Playwright
-        env:
-          JORANI_URL: http://localhost:8080
+      - name: Run Playwright tests
         run: npx playwright test
 
-      - name: guardar reporte HTML
+      - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
