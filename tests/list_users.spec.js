@@ -453,3 +453,29 @@ test("@exploratory @positive Verificar que se pueda activar o inactivar un usuar
     throw error;
   }
 });
+
+test.fail("@exploratory @positive Verificar que se pueda eliminar usuarios y se muestre mensaje de éxito", async ({ loggedInPage, usuarioDePrueba, nuevoUsuarioDePrueba }) => {
+  const home = new HomePage(loggedInPage);
+  const usersPage = new UsersPage(loggedInPage);
+
+  try {
+    Logger.info("eliminando usuarios");
+    await home.goToListUsers();
+    // await usersPage.changeEntriesTo(50);
+    await usersPage.sortBy("ID");
+    await usersPage.deleteUserByLogin(usuarioDePrueba);
+    await usersPage.deleteUserByLogin(nuevoUsuarioDePrueba);
+
+    const stillExists = await usersPage.userExists(usuarioDePrueba);
+    expect(stillExists).toBeFalsy();
+
+    const stillExists1 = await usersPage.userExists(nuevoUsuarioDePrueba);
+    expect(stillExists1).toBeFalsy();
+
+    Logger.info("usuarios eliminado correctamente.");
+  } catch (error) {
+    Logger.error(`error al eliminar usuario: ${error.message}`);
+    await loggedInPage.screenshot({ path: screenshotPath("error_eliminar_usuario") });
+    throw error;
+  }
+});

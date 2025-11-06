@@ -27,8 +27,17 @@ jobs:
     - name: Check container logs
       run: docker logs jorani || true
 
+    - name: Check running containers
+      run: docker ps -a
+
+    - name: Check container logs
+      run: docker logs jorani || true
+
     - name: Wait for Jorani to be ready
-      run: npx wait-on http://localhost:8080 --timeout 60000
+      run: |
+        echo "Waiting for Jorani to start..."
+        npx wait-on http://localhost:8080/session/login --timeout 180000
+        curl -I http://localhost:8080/session/login
 
     - name: Run Playwright tests
       run: npx playwright test

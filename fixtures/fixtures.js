@@ -9,13 +9,17 @@ import { CreateUserPage } from "../pages/CreateUserPage.js";
 import { UsersPage } from "../pages/UsersPage.js";
 import { createUserRamd } from "../data/createUserRamd.js";
 import { LeaveTypesPage } from "../pages/LeaveTypesPage.js";
+import { execSync } from "child_process";
 
 export const test = base.extend({
   sqliteConn: async ({}, use) => {
+    console.log("regenerando testdata.db con faker");
+    execSync("node scripts/seed.db.js");
     const db = await open({
       filename: "data/testdata.db",
       driver: sqlite3.Database,
     });
+
     await use(db);
     await db.close();
   },
@@ -80,7 +84,7 @@ export const test = base.extend({
     // await home.goToRequests();
     // await loggedInPage.waitForSelector(requestsPage.requestsTable);
 
-    // const lastRequest = await requestsPage.getLatestRequest(); // 👈 nuevo método
+    // const lastRequest = await requestsPage.getLatestRequest(); 
     // console.log(lastRequest);
     // await use({ requestsPage, lastRequest });
     await use();
@@ -92,6 +96,28 @@ export const test = base.extend({
     const createUser = new CreateUserPage(loggedInPage);
     await home.goToCrearUsuario();
     const user = createUserRamd.validUser;
+
+    await createUser.fillForm({
+      firstname: user.firstname,
+      lastname: user.lastname,
+      login: user.login,
+      email: user.email, 
+      password: user.password
+    });
+
+    // espera que se muestre en la tabla (última página)
+    // await loggedInPage.waitForSelector(`text=${user.login}`);
+
+    // pasamos el login al test
+    await use(user.login);
+  },
+
+  nuevoUsuarioDePrueba: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const users = new UsersPage(loggedInPage);
+    const createUser = new CreateUserPage(loggedInPage);
+    await home.goToCrearUsuario();
+    const user = createUserRamd.newValidUser;
 
     await createUser.fillForm({
       firstname: user.firstname,

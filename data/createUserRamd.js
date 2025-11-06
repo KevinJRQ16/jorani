@@ -13,6 +13,13 @@ export const createUserRamd = {
     email: "correo@gmail.com",
     password: "holamundo"
   },
+  newValidUser: {
+    firstname: `Skynet${Date.now()}`,
+    lastname: `Ramos${Date.now()}`,
+    login: `sky${Math.floor(Math.random() * 10000)}`,
+    email: "correo@gmail.com",
+    password: "holamundo"
+  },
   validUserWithFiledsOptional: {
     firstname: `Skynet${Date.now()}`,
     lastname: `Ramos${Date.now()}`,

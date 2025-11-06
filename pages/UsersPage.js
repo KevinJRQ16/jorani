@@ -20,6 +20,19 @@ export class UsersPage {
     this.resetPwdModal = "#frmResetPwd";
     this.deleteConfirmButton = `${this.deleteModal} .btn-primary`;
 
+    this.usersTable = "#users";
+    this.tableHeader = `${this.usersTable} thead`;
+
+  }
+
+  async sortBy(columnName) {
+    const column = this.page.locator(`${this.tableHeader} th`, { hasText: columnName });
+
+    await column.first().waitFor({ state: "visible" });
+
+    await column.first().click();
+
+    await this.page.waitForSelector(`${this.usersTable} tbody tr`, { state: "visible" });
   }
 
   async fillFirstname(value) {

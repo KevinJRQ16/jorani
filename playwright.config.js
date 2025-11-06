@@ -18,7 +18,7 @@ export default defineConfig({
   ],
 
   use: {
-    baseURL: 'http://localhost:3000', // opcional, tu base URL
+    baseURL: 'http://localhost:8080', // opcional, tu base URL
     trace: 'on-first-retry',          // recolecta trace en reintentos
     screenshot: 'only-on-failure',    // saca screenshot si falla
     video: 'retain-on-failure'        // guarda video si falla

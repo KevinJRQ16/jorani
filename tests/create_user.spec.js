@@ -340,3 +340,23 @@ test("@exploratory @negative Verificar que al cancelar el modal de entidad no se
     throw error;
   }
 });
+
+test("@p1 DDT - Crear usuario desde SQLite", async ({ loggedInPage, sqliteConn, cleanupUltimoUsuario }) => {
+  const home = new HomePage(loggedInPage);
+  const createUser = new CreateUserPage(loggedInPage);
+  const usersPage = new UsersPage(loggedInPage);
+
+  const users = await sqliteConn.all(`SELECT firstname, lastname, login, email, password FROM users`);
+
+  for (const user of users) {
+    await home.goToCrearUsuario();
+    await createUser.fillForm({
+      firstname: user.firstname,
+      lastname: user.lastname,
+      login: user.login,
+      email: user.email,
+      password: user.password,
+    });
+    expect(await usersPage.hasSuccessMessage()).toBeTruthy();
+  }
+});
