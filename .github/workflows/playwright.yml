@@ -24,7 +24,7 @@ jobs:
 
       - name: Start Jorani with Docker Compose
         run: |
-          docker-compose up -d
+          docker compose up -d
           docker ps -a
 
       - name: Wait for Jorani to be ready
