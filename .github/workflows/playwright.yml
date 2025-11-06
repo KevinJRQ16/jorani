@@ -24,6 +24,8 @@ jobs:
         cd jorani
         docker build -t jorani-custom .
         docker run -d -p 8080:80 jorani-custom
+    - name: Check container logs
+      run: docker logs jorani || true
 
     - name: Wait for Jorani to be ready
       run: npx wait-on http://localhost:8080 --timeout 60000
