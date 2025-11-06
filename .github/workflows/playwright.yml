@@ -22,8 +22,9 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chrome
 
-      - name: Start Jorani with Docker Compose
+      - name: Build and start Jorani (Docker Compose)
         run: |
+          docker compose build
           docker compose up -d
           docker ps -a
 
