@@ -1,0 +1,48 @@
+{
+  "validOvertime": {
+    "duration": "0.5",
+    "reason": "Trabajo adicional en proyecto urgente",
+    "status": "Requested"
+  },
+
+  "validPlanned": {
+    "duration": "0.5",
+    "reason": "Trabajo adicional en proyecto urgente",
+    "status": "Planned"
+  },
+
+  "missingDate": {
+    "duration": "0.5",
+    "reason": "Trabajo adicional sin fecha",
+    "status": "Requested"
+  },
+
+  "missingDuration": {
+    "reason": "Sin duración asignada",
+    "status": "Planned"
+  },
+
+  "missingReason": {
+    "duration": "1",
+    "status": "Requested"
+  },
+
+  "datePassed": {
+    "date": "10/01/2025",
+    "reason": "trabajo adicional"
+  },
+
+  "dateInvalid": {
+    "date": "10/21/2020",
+    "duration": "0.125",
+    "reason": "trabajo adicional",
+    "status": "Requested"
+  },
+
+  "fieldReasonInvalid": {
+    "date": "10/21/2024",
+    "duration": "0.125",
+    "reason": "                  ",
+    "status": "Requested"
+  }
+}

@@ -3,7 +3,6 @@ import { test } from "../fixtures/fixtures.js";
 import { HomePage } from "../pages/HomePage.js";
 import { CreateUserPage } from "../pages/CreateUserPage.js";
 import { UsersPage } from "../pages/UsersPage.js";
-// import { screenshotPath } from "../utils/helpers.js";
 import createUsers from "../data/createUsers.json" assert { type: "json" };
 import { createUserRamd } from "../data/createUserRamd.js";
 import { Logger, screenshotPath } from "../utils/helpers.js";
@@ -341,7 +340,7 @@ test("@exploratory @negative Verificar que al cancelar el modal de entidad no se
   }
 });
 
-test("@p1 DDT - Crear usuario desde SQLite", async ({ loggedInPage, sqliteConn, cleanupUltimoUsuario }) => {
+test("@exploratory @positive Verificar que se pueda crear usuario desde SQLite", async ({ loggedInPage, sqliteConn, cleanupUltimoUsuario }) => {
   const home = new HomePage(loggedInPage);
   const createUser = new CreateUserPage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);

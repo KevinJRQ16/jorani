@@ -8,11 +8,34 @@ export class HomePage {
     this.requestsMenu = 'a.dropdown-toggle:has-text("Requests")';
     this.listOfLeaveRequests = 'a:has-text("List of leave requests")';
     this.requestsALeaveLink = 'a:has-text("Request a Leave")';
+    this.submitAnOTRequestLink = 'a:has-text("Submit an OT Request")';
+    this.listOfOTWorked = 'a:has-text("List of OT Worked")';
+
   
 
     this.approvalMenu = 'a.dropdown-toggle:has-text("Approval")';
+    this.delegations = 'a:has-text("Delegations")';
     // this.leavesLink = 'a[href*="/requests"]';
     this.leavesLink = 'a[href="http://localhost/requests"]';
+    this.overtimeLink = 'a:has-text("Overtime")';
+  }
+
+  async goToOvertime() {
+    await this.page.waitForSelector(this.approvalMenu, { timeout: 10000 });
+    await this.page.hover(this.approvalMenu);
+    await this.page.click(this.approvalMenu);
+    await this.page.waitForSelector(this.overtimeLink, { timeout: 10000 });
+    await this.page.click(this.overtimeLink);
+    await this.page.waitForURL("**/overtime");
+  }
+
+  async goToDelegations() {
+    await this.page.waitForSelector(this.approvalMenu, { timeout: 10000 });
+    await this.page.hover(this.approvalMenu);
+    await this.page.click(this.approvalMenu);
+    await this.page.waitForSelector(this.delegations, { timeout: 10000 });
+    await this.page.click(this.delegations);
+    await this.page.waitForURL("**/requests/delegations");
   }
 
   async goToListOfLeaveRequests() {
@@ -60,13 +83,31 @@ export class HomePage {
     await this.page.waitForURL("**/leaves/create");
   }
 
+  async goToCreateOvertime() {
+    await this.page.waitForSelector(this.requestsMenu, { timeout: 10000 });
+    await this.page.hover(this.requestsMenu);
+    await this.page.click(this.requestsMenu);
+    await this.page.waitForSelector(this.submitAnOTRequestLink, { timeout: 10000 });
+    await this.page.click(this.submitAnOTRequestLink);
+    await this.page.waitForURL("**/extra/create");
+  }
+
   //approval
   async goToRequests() {
     await this.page.waitForSelector(this.approvalMenu, { timeout: 10000 });
-    await this.page.hover(this.approvalMenu); // despliega el menú
-    await this.page.click(this.approvalMenu); // asegura que se muestre el submenú
+    await this.page.hover(this.approvalMenu); 
+    await this.page.click(this.approvalMenu); 
     await this.page.waitForSelector(this.leavesLink, { timeout: 10000 });
     await this.page.click(this.leavesLink);
     await this.page.waitForURL("**/requests");
   }  
+
+  async goToListExtras(){
+    await this.page.waitForSelector(this.approvalMenu, { timeout: 10000 });
+    await this.page.hover(this.requestsMenu); 
+    await this.page.click(this.requestsMenu); 
+    await this.page.waitForSelector(this.listOfOTWorked, { timeout: 10000 });
+    await this.page.click(this.listOfOTWorked);
+    await this.page.waitForURL("**/extra");
+  }
 }
