@@ -5,6 +5,7 @@ import { OvertimeRequestPage } from "../pages/OvertimeRequestPage.js";
 import { ExtrasPage } from "../pages/ExtrasPage.js";
 import overtimeRequests from "../data/overtimeRequests.json" assert { type: "json" };
 import { Logger, screenshotPath } from "../utils/helpers.js";
+import { da } from "@faker-js/faker";
 
 test("@exploratory @positive verificar creación de solicitud de horas extra con estado 'Requested' ", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
@@ -14,10 +15,11 @@ test("@exploratory @positive verificar creación de solicitud de horas extra con
   try {
     Logger.info("creando nueva solicitud de horas extra");
     await home.goToCreateOvertime();
+    const data = overtimeRequests.validOvertime;
     await overtime.selectDate();
-    await overtime.setDuration("0.5");
-    await overtime.setReason("Trabajo adicional en proyecto urgente");
-    await overtime.selectStatus("Requested");
+    await overtime.setDuration(data.duration);
+    await overtime.setReason(data.reason);
+    await overtime.selectStatus(data.status);
     await overtime.submitRequest();
 
     const hasMessage = await extras.hasSuccessMessage();
@@ -38,10 +40,11 @@ test("@exploratory @positive verificar creación de solicitud de horas extra con
   try {
     Logger.info("creando nueva solicitud de horas extra");
     await home.goToCreateOvertime();
+    const data = overtimeRequests.validPlanned;
     await overtime.selectDate();
-    await overtime.setDuration("0.5");
-    await overtime.setReason("Trabajo adicional en proyecto urgente");
-    await overtime.selectStatus("Planned");
+    await overtime.setDuration(data.duration);
+    await overtime.setReason(data.reason);
+    await overtime.selectStatus(data.status);
     await overtime.submitRequest();
 
     const hasMessage = await extras.hasSuccessMessage();
@@ -61,9 +64,10 @@ test("@exploratory @negative verificar que el campo 'Date' sea obligatorio", asy
   try {
     Logger.info("verificando campo Date obligatorio");
     await home.goToCreateOvertime();
-    await overtime.setDuration("0.5");
-    await overtime.setReason("Trabajo adicional sin fecha");
-    await overtime.selectStatus("Requested");
+    const data = overtimeRequests.missingDate;
+    await overtime.setDuration(data.duration);
+    await overtime.setReason(data.reason);
+    await overtime.selectStatus(data.status);
     await overtime.submitRequest();
 
     const message = await overtime.getMandatoryFieldAlert();
@@ -83,9 +87,10 @@ test("@exploratory @negative verificar que el campo 'Duration' sea obligatorio",
   try {
     Logger.info("verificando campo Duration obligatorio");
     await home.goToCreateOvertime();
+    const data = overtimeRequests.missingDuration;
     await overtime.selectDate();
-    await overtime.setReason("Sin duración asignada");
-    await overtime.selectStatus("Planned");
+    await overtime.setReason(data.reason);
+    await overtime.selectStatus(data.status);
     await overtime.submitRequest();
 
     const message = await overtime.getMandatoryFieldAlert();
@@ -105,9 +110,10 @@ test("@exploratory @negative verificar que el campo 'Reason' sea obligatorio", a
   try {
     Logger.info("verificando campo Reason obligatorio");
     await home.goToCreateOvertime();
+    const data = overtimeRequests.missingReason;
     await overtime.selectDate();
-    await overtime.setDuration("1");
-    await overtime.selectStatus("Requested");
+    await overtime.setDuration(data.duration);
+    await overtime.selectStatus(data.status);
     await overtime.submitRequest();
 
     const message = await overtime.getMandatoryFieldAlert();
@@ -154,7 +160,7 @@ test("@exploratory @negative verificar que no se permita guardar solicitud de ho
   }
 });
 
-test.fail("@w1 @exploratory @positive verificar creación de solicitud de horas extra con año pasado ", async ({ loggedInPage }) => {
+test.fail("@exploratory @positive verificar creación de solicitud de horas extra con año pasado ", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const overtime = new OvertimeRequestPage(loggedInPage);
   const extras = new ExtrasPage(loggedInPage);

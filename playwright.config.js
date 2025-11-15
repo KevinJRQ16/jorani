@@ -6,22 +6,22 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
-  timeout: 90000,
+  timeout: 60000,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
 
   reporter: [
-    ['html'],            // Reporte HTML estándar
-    ['allure-playwright'] // Reporte Allure
+    ['html'],            
+    ['allure-playwright'] 
   ],
 
   use: {
-    baseURL: process.env.JORANI_URL || 'http://localhost:8080', // opcional, tu base URL
-    trace: 'on-first-retry',          // recolecta trace en reintentos
-    screenshot: 'only-on-failure',    // saca screenshot si falla
-    video: 'retain-on-failure'        // guarda video si falla
+    baseURL: process.env.JORANI_URL || 'http://localhost:8080', 
+    trace: 'on-first-retry',          
+    screenshot: 'only-on-failure',    
+    video: 'retain-on-failure'        
   },
 
   projects: [
