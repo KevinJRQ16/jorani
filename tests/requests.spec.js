@@ -514,7 +514,7 @@ test("@exploratory @positive verificar que el selector 'show entries' filtre por
   }
 });
 
-test("@exploratory @positive verificar que el buscador permite buscar correctamente a un usuario existente", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el buscador permite buscar correctamente una solicitud existente", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -532,14 +532,14 @@ test("@exploratory @positive verificar que el buscador permite buscar correctame
   }
 });
 
-test("@exploratory @negative verificar que al buscar usuario inexistente se muestre un mensaje en fila", async ({ loggedInPage }) => {
+test("@exploratory @negative verificar que al buscar solicitud inexistente se muestre un mensaje en fila", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
   try {
-    Logger.info("buscando usuario inexistente en solicitudes");
+    Logger.info("buscando solicitud inexistente en solicitudes");
     await home.goToRequests();
-    await requestsPage.searchLeave("UsuarioInexistente123");
+    await requestsPage.searchLeave("SolicitudInexistente123");
     const count = await requestsPage.getRowCount();
     expect(count).toBe(1);
 

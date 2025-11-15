@@ -1,0 +1,22 @@
+{
+  "validOvertime": {
+    "date": "06/10/2025",
+    "reason": "trabajo urgente"
+  },
+  "datePassed": {
+    "date": "10/01/2025",
+    "reason": "trabajo adicional"
+  },
+  "dateInvalid": {
+    "date": "10/21/2020",
+    "duration": "0.125",
+    "reason": "trabajo adicional",
+    "status": "Requested"
+  },
+  "fieldReasonInvalid": {
+    "date": "10/21/2024",
+    "duration": "0.125",
+    "reason": "                  ",
+    "status": "Requested"
+  }
+}

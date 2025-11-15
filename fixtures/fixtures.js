@@ -9,6 +9,8 @@ import { CreateUserPage } from "../pages/CreateUserPage.js";
 import { UsersPage } from "../pages/UsersPage.js";
 import { createUserRamd } from "../data/createUserRamd.js";
 import { LeaveTypesPage } from "../pages/LeaveTypesPage.js";
+import { OvertimeRequestPage } from "../pages/OvertimeRequestPage.js";
+import { ExtrasPage } from "../pages/ExtrasPage.js";
 import { execSync } from "child_process";
 
 export const test = base.extend({
@@ -40,30 +42,7 @@ export const test = base.extend({
     // await context.close();
   },
 
-  // createdRequest: async ({ loggedInPage }, use) => {
-  //   const home = new HomePage(loggedInPage);
-  //   const leaveRequestPage = new LeaveRequestPage(loggedInPage);
-  //   const requestsPage = new RequestsPage(loggedInPage);
-
-  //   // Ir a crear una solicitud
-  //   await loggedInPage.goto("http://localhost/leaves/create");
-  //   await loggedInPage.waitForSelector(leaveRequestPage.leaveTypeSelect);
-
-  //   // Crear solicitud básica (tipo: Annual Leave)
-  //   await leaveRequestPage.selectLeaveType("paid leave");
-  //   await leaveRequestPage.selectStartDate();
-  //   await leaveRequestPage.selectEndDate();
-  //   await leaveRequestPage.setCause("Motivo automático de prueba1");
-  //   await leaveRequestPage.submitRequested();
-
-  //   await loggedInPage.waitForSelector("#flashbox");
-  //   await loggedInPage.waitForTimeout(1000);
-
-  //   await home.goToRequests();
-  //   await loggedInPage.waitForURL("**/requests");
-
-  //   await use(requestsPage);
-  // },
+  
 
   createdRequest: async ({ loggedInPage }, use) => {
     const home = new HomePage(loggedInPage);
@@ -79,14 +58,6 @@ export const test = base.extend({
     await leaveRequestPage.submitRequested();
 
     await loggedInPage.waitForSelector("#flashbox");
-
-    // Ir a la lista y obtener la última solicitud
-    // await home.goToRequests();
-    // await loggedInPage.waitForSelector(requestsPage.requestsTable);
-
-    // const lastRequest = await requestsPage.getLatestRequest(); 
-    // console.log(lastRequest);
-    // await use({ requestsPage, lastRequest });
     await use();
   },
 
@@ -213,11 +184,11 @@ export const test = base.extend({
 
     await use(user.login);
 
-    console.log(`🧹 Eliminando usuario temporal: ${user.login}`);
+    console.log(`eliminando usuario temporal: ${user.login}`);
     try {
       await users.deleteUserByLogin(user.login);
     } catch (err) {
-      console.warn(`⚠️ No se pudo eliminar ${user.login}:`, err.message);
+      console.warn(`no se pudo eliminar ${user.login}:`, err.message);
     }
 
     // try {
@@ -276,6 +247,21 @@ export const test = base.extend({
     } catch (error) {
       console.error("error durante la limpieza de usuario:", error.message);
     }
+  },
+
+  solicitudHorasExtraEstadoRequested: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const overtime = new OvertimeRequestPage(loggedInPage);
+    const extras = new ExtrasPage(loggedInPage);
+  
+    await home.goToCreateOvertime();
+    await overtime.selectDate();
+    await overtime.setDuration("0.5");
+    await overtime.setReason("Trabajo adicional en proyecto1");
+    await overtime.selectStatus("Requested");
+    await overtime.submitRequest();
+
+    await use();
   },
 
 });
