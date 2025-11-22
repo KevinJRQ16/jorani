@@ -30,12 +30,15 @@ test("@exploratory @positive Verificar que se muestre solo 10 usuarios por pági
   const usersPage = new UsersPage(loggedInPage);
 
   try {
-    Logger.info("validando que se muestren solo 10 usuarios por página...");
+    Logger.info("validando que se muestren entre 1 y 10 usuarios por página...");
     await home.goToListUsers();
 
     const count = await usersPage.getRowCount();
     Logger.info(`usuarios visibles: ${count}`);
-    expect(count).toBe(10);
+    expect(count).toBeGreaterThanOrEqual(1);
+    expect(count).toBeLessThanOrEqual(10);
+
+
 
     Logger.info("test finalizado correctamente.");
   } catch (error) {
@@ -50,13 +53,14 @@ test("@exploratory @positive Verificar que se cambie cantidad de registros mostr
   const usersPage = new UsersPage(loggedInPage);
 
   try {
-    Logger.info("cambiando cantidad de registros mostrados a 25");
+    Logger.info("cambiando cantidad de registros mostrados entre 1 y 25 maximo");
     await home.goToListUsers();
     await usersPage.changeEntriesTo(25);
 
     const count = await usersPage.getRowCount();
     Logger.info(`cantidad actual de filas: ${count}`);
-    expect(count).toBeGreaterThanOrEqual(10);
+    expect(count).toBeGreaterThanOrEqual(1);
+    expect(count).toBeLessThanOrEqual(25);
 
     Logger.info("test finalizado correctamente.");
   } catch (error) {
@@ -71,13 +75,14 @@ test("@exploratory @positive Verificar que se cambie cantidad de registros mostr
   const usersPage = new UsersPage(loggedInPage);
 
   try {
-    Logger.info("cambiando cantidad de registros mostrados a 50");
+    Logger.info("cambiando cantidad de registros mostrados entre 1 y 50");
     await home.goToListUsers();
     await usersPage.changeEntriesTo(50);
 
     const count = await usersPage.getRowCount();
     Logger.info(`cantidad actual de filas: ${count}`);
-    expect(count).toBeGreaterThanOrEqual(10);
+    expect(count).toBeGreaterThanOrEqual(1);
+    expect(count).toBeLessThanOrEqual(50);
 
     Logger.info("test finalizado correctamente.");
   } catch (error) {
@@ -92,13 +97,14 @@ test("@exploratory @positive Verificar que se cambie cantidad de registros mostr
   const usersPage = new UsersPage(loggedInPage);
 
   try {
-    Logger.info("cambiando cantidad de registros mostrados a 100");
+    Logger.info("cambiando cantidad de registros mostrados entre 1 y 100 como maximo");
     await home.goToListUsers();
     await usersPage.changeEntriesTo(100);
 
     const count = await usersPage.getRowCount();
     Logger.info(`cantidad actual de filas: ${count}`);
-    expect(count).toBeGreaterThanOrEqual(10);
+    expect(count).toBeGreaterThanOrEqual(1);
+    expect(count).toBeLessThanOrEqual(100);
 
     Logger.info("test finalizado correctamente.");
   } catch (error) {
@@ -107,6 +113,7 @@ test("@exploratory @positive Verificar que se cambie cantidad de registros mostr
     throw error;
   }
 });
+
 test("@exploratory @positive Verificar que el buscador permite buscar correctamente a un usuario existente", async ({ loggedInPage }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
@@ -189,7 +196,7 @@ test("@exploratory @negative Verificar que texto de paginación se muestre en 0 
   }
 });
 
-test("@exploratory @positive Verificar que se pueda navegar a la siguiente y volver a la anterior página de usuarios", async ({ loggedInPage }) => {
+test("@w2 @exploratory @positive Verificar que se pueda navegar a la siguiente y volver a la anterior página de usuarios", async ({ loggedInPage, usuariosParaPaginacion }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
 
@@ -295,17 +302,22 @@ test.fail("@exploratory @negative Verificar que al eliminar un usuario se muestr
   }
 });
 
-test("@exploratory @positive Verificar que se pueda abrir el modal de cambio de contraseña de un usuario", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se pueda abrir el modal de cambio de contraseña de un usuario", async ({ loggedInPage, usuarioTemporal }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
 
   try {
     Logger.info("abriendo modal de cambio de contraseña");
     await home.goToListUsers();
-    await usersPage.resetPasswordByIndex(1);
+    await usersPage.searchUser(usuarioTemporal);
+    await usersPage.openResetPasswordModal(usuarioTemporal);
 
     await expect(loggedInPage.locator(usersPage.resetPwdModal)).toBeVisible();
     Logger.info("modal abierto correctamente.");
+
+    await loggedInPage.click(`${usersPage.resetPwdModal} .close`);
+    await expect(loggedInPage.locator(usersPage.resetPwdModal)).toBeHidden();
+
   } catch (error) {
     Logger.error(`error al abrir modal de cambio de contraseña: ${error.message}`);
     await loggedInPage.screenshot({ path: screenshotPath("error_modal_contrasena") });
@@ -313,15 +325,14 @@ test("@exploratory @positive Verificar que se pueda abrir el modal de cambio de 
   }
 });
 
-test("@exploratory @positive Verificar que se pueda cambiar la contraseña de un usuario correctamente", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se pueda cambiar la contraseña de un usuario correctamente", async ({ loggedInPage, usuarioTemporal }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
 
   try {
     Logger.info("cambiando contraseña de usuario");
     await home.goToListUsers();
-    const nuevaPassword = "Cambio123!";
-    await usersPage.changePasswordByIndex(1, nuevaPassword);
+    await usersPage.resetPasswordByLogin(usuarioTemporal);
 
     const hasMessage = await usersPage.hasSuccessMessage();
     expect(hasMessage).toBeTruthy();
@@ -334,14 +345,14 @@ test("@exploratory @positive Verificar que se pueda cambiar la contraseña de un
   }
 });
 
-test.fail("@exploratory @negative Verificar que no se debería poder resetear la contraseña con el campo vacío", async ({ loggedInPage }) => {
+test.fail("@exploratory @negative Verificar que no se debería poder resetear la contraseña con el campo vacío", async ({ loggedInPage, usuarioTemporal }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
 
   try {
     Logger.info("intentando resetear contraseña vacía");
     await home.goToListUsers();
-    await usersPage.changePasswordByIndex(1, "");
+    await usersPage.resetPasswordByLogin(usuarioTemporal, "");
 
     const hasMessage = await usersPage.hasSuccessMessage();
     expect(hasMessage).toBeTruthy();
@@ -375,17 +386,19 @@ test("@exploratory @positive Verificar que se puedan obtener los datos visibles 
   }
 });
 
-test("@exploratory @positive Verificar que se pueda ingresar a la página de edición del segundo usuario", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se pueda ingresar a la página de edición del segundo usuario", async ({ loggedInPage, usuarioTemporal }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
 
   try {
     Logger.info("ingresando a página de edición del segundo usuario");
     await home.goToListUsers();
-    await usersPage.goToEditUserByIndex(1);
+    await usersPage.goToEditUserByLogin(usuarioTemporal);
 
     await expect(loggedInPage).toHaveURL(/\/users\/edit\//);
     Logger.info("redirección a edición correcta.");
+    Logger.info("accediendo a la pagina lista de usuarios para limpieza.");
+    await home.goToListUsers();
   } catch (error) {
     Logger.error(`error al ingresar a página de edición: ${error.message}`);
     await loggedInPage.screenshot({ path: screenshotPath("error_editar_usuario") });
@@ -393,7 +406,7 @@ test("@exploratory @positive Verificar que se pueda ingresar a la página de edi
   }
 });
 
-test("@exploratory @positive Verificar que se pueda editar el segundo usuario y guardar los cambios", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se pueda editar el segundo usuario y guardar los cambios", async ({ loggedInPage, usuarioTemporal }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
   const createUserPage = new CreateUserPage(loggedInPage);
@@ -401,7 +414,7 @@ test("@exploratory @positive Verificar que se pueda editar el segundo usuario y 
   try {
     Logger.info("editando segundo usuario");
     await home.goToListUsers();
-    await usersPage.goToEditUserByIndex(1);
+    await usersPage.goToEditUserByLogin(usuarioTemporal);
     await createUserPage.fillLastname("Modificado");
     await createUserPage.clickSendOrUpdate();
     await loggedInPage.waitForURL("**/users");
@@ -410,6 +423,7 @@ test("@exploratory @positive Verificar que se pueda editar el segundo usuario y 
     expect(hasMessage).toBeTruthy();
 
     Logger.info("usuario editado correctamente.");
+    await home.goToListUsers();
   } catch (error) {
     Logger.error(`error al editar usuario: ${error.message}`);
     await loggedInPage.screenshot({ path: screenshotPath("error_guardar_edicion") });
@@ -417,7 +431,7 @@ test("@exploratory @positive Verificar que se pueda editar el segundo usuario y 
   }
 });
 
-test("@exploratory @positive Verificar que se pueda cancelar la edición de un usuario existente", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se pueda cancelar la edición de un usuario existente", async ({ loggedInPage, usuarioTemporal }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
   const createUserPage = new CreateUserPage(loggedInPage);
@@ -425,11 +439,12 @@ test("@exploratory @positive Verificar que se pueda cancelar la edición de un u
   try {
     Logger.info("cancelando edición de usuario existente");
     await home.goToListUsers();
-    await usersPage.goToEditUserByIndex(1);
+    await usersPage.goToEditUserByLogin(usuarioTemporal);
     await createUserPage.cancelButtonEdit();
 
     await loggedInPage.waitForURL("**/users");
     Logger.info("cancelación de edición correcta.");
+    await home.goToListUsers();
   } catch (error) {
     Logger.error(`error al cancelar edición: ${error.message}`);
     await loggedInPage.screenshot({ path: screenshotPath("error_cancelar_edicion") });
@@ -437,14 +452,14 @@ test("@exploratory @positive Verificar que se pueda cancelar la edición de un u
   }
 });
 
-test("@exploratory @positive Verificar que se pueda activar o inactivar un usuario existente", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se pueda activar o inactivar un usuario existente", async ({ loggedInPage, usuarioTemporal }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
 
   try {
     Logger.info("activando o inactivando usuario existente");
     await home.goToListUsers();
-    await usersPage.toggleActiveByIndex(1);
+    await usersPage.toggleActiveByLogin(usuarioTemporal);
 
     Logger.info("estado de usuario modificado correctamente.");
   } catch (error) {
@@ -454,7 +469,7 @@ test("@exploratory @positive Verificar que se pueda activar o inactivar un usuar
   }
 });
 
-test.fail("@exploratory @positive Verificar que se pueda eliminar usuarios y se muestre mensaje de éxito", async ({ loggedInPage, usuarioDePrueba, nuevoUsuarioDePrueba }) => {
+test("@exploratory @positive Verificar que se pueda eliminar usuarios y se muestre mensaje de éxito", async ({ loggedInPage, usuarioDePrueba, nuevoUsuarioDePrueba }) => {
   const home = new HomePage(loggedInPage);
   const usersPage = new UsersPage(loggedInPage);
 

@@ -150,7 +150,7 @@ test("@exploratory @positive verificar que los datos de la tabla se carguen corr
   }
 });
 
-test("@exploratory @positive verificar que el botón de paginación 'Next' funcione correctamente", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el botón de paginación 'Next' funcione correctamente", async ({ loggedInPage, horasExtrasParaPaginacion }) => {
   const home = new HomePage(loggedInPage);
   const overtimePage = new OvertimePage(loggedInPage);
 
@@ -173,7 +173,7 @@ test("@exploratory @positive verificar que el botón de paginación 'Next' funci
   }
 });
 
-test("@exploratory @positive verificar que se muestre mensaje cuando no existen registros", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que se muestre mensaje cuando no existen registros", async ({ loggedInPage, solicitudHorasExtrasTemporal }) => {
   const home = new HomePage(loggedInPage);
   const overtimePage = new OvertimePage(loggedInPage);
 
@@ -181,10 +181,11 @@ test("@exploratory @positive verificar que se muestre mensaje cuando no existen 
     Logger.info("verificando mensaje de tabla vacía");
     await home.goToOvertime();
 
-    await overtimePage.searchOvertime("textoInexistenteXYZ");
-    const emptyText = await loggedInPage.locator(overtimePage.emptyRow).innerText();
+    await overtimePage.searchOvertime("inexistenteXYZ");
 
-    expect(emptyText.toLowerCase()).toContain("no matching records");
+    const infoText = await overtimePage.getInfoTextSearch();
+    expect(infoText).toContain("No matching records found");
+
     Logger.info("mensaje de tabla vacía mostrado correctamente");
   } catch (error) {
     Logger.error(`error al verificar tabla vacía: ${error.message}`);
@@ -247,7 +248,7 @@ test("@exploratory @positive verificar que el botón 'Pending requests' filtre s
   }
 });
 
-test("@exploratory @positive verificar que el total de solicitudes de horas extra coincida con el número mostrado en la tabla", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el total de solicitudes de horas extra coincida con el número mostrado en la tabla", async ({ loggedInPage, solicitudHorasExtrasTemporal }) => {
   const home = new HomePage(loggedInPage);
   const overtimePage = new OvertimePage(loggedInPage);
 
@@ -265,7 +266,7 @@ test("@exploratory @positive verificar que el total de solicitudes de horas extr
   }
 });
 
-test("@exploratory @positive verificar que se muestre la información completa de cada solicitud de horas extra visible en la tabla", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que se muestre la información completa de cada solicitud de horas extra visible en la tabla", async ({ loggedInPage, solicitudHorasExtrasTemporal }) => {
   const home = new HomePage(loggedInPage);
   const overtimePage = new OvertimePage(loggedInPage);
 
@@ -283,7 +284,7 @@ test("@exploratory @positive verificar que se muestre la información completa d
   }
 });
 
-test("@exploratory @positive verificar que se navegue correctamente al abrir la primera solicitud de horas extra", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que se navegue correctamente al abrir la primera solicitud de horas extra", async ({ loggedInPage, solicitudHorasExtrasTemporal }) => {
   const home = new HomePage(loggedInPage);
   const overtimePage = new OvertimePage(loggedInPage);
 
@@ -301,7 +302,7 @@ test("@exploratory @positive verificar que se navegue correctamente al abrir la 
   }
 });
 
-test("@exploratory @positive verificar que se muestre todas las solicitudes de horas extra de todas las paginas", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que se muestre todas las solicitudes de horas extra de todas las paginas", async ({ loggedInPage, solicitudHorasExtrasTemporal }) => {
   const home = new HomePage(loggedInPage);
   const overtimePage = new OvertimePage(loggedInPage);
 
@@ -336,7 +337,7 @@ test("@exploratory @positive verificar que el buscador permite buscar correctame
   }
 });
 
-test("@exploratory @negative verificar que al buscar solicitud inexistente se muestre un mensaje en fila", async ({ loggedInPage }) => {
+test("@exploratory @negative verificar que al buscar solicitud inexistente se muestre un mensaje en fila", async ({ loggedInPage, solicitudHorasExtrasTemporal }) => {
   const home = new HomePage(loggedInPage);
   const overtimePage = new OvertimePage(loggedInPage);
 

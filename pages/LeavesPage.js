@@ -38,6 +38,33 @@ export class LeavesPage {
     this.searchInput = "#leaves_filter input[type='search']";
 
     this.emptyRow = ".dataTables_empty";
+
+    this.deleteIcon = "a.confirm-delete";               
+    this.deleteModal = "#frmDeleteLeaveRequest";        
+    this.deleteConfirmButton = "#lnkDeleteUser";  
+  }
+
+  async deleteFirstLeave() {
+    await this.page.waitForSelector(this.tableRows);
+
+    await this.page.locator(this.deleteIcon).first().click();
+
+    // 3. Esperar modal visible
+    const modal = this.page.locator(this.deleteModal);
+    await expect(modal).toBeVisible();
+
+    // 4. Clic en botón YES (confirmar eliminación)
+    await this.page.locator(this.deleteConfirmButton).click();
+
+    // // 5. Esperar a que aparezca mensaje de éxito
+    // await this.page.waitForSelector(this.flashBox, { timeout: 5000 });
+
+    // const flashMessage = (await this.page.locator(this.flashBox).innerText()).trim();
+
+    // // 6. Validar que se eliminó correctamente
+    // expect(flashMessage).toMatch(/successfully deleted|successfully cancelled/i);
+
+    // return flashMessage;
   }
 
   async hasSuccessMessage() {

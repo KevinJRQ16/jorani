@@ -11,7 +11,10 @@ import { createUserRamd } from "../data/createUserRamd.js";
 import { LeaveTypesPage } from "../pages/LeaveTypesPage.js";
 import { OvertimeRequestPage } from "../pages/OvertimeRequestPage.js";
 import { ExtrasPage } from "../pages/ExtrasPage.js";
+import { OvertimePage } from "../pages/OvertimePage.js";
 import { execSync } from "child_process";
+import { faker } from "@faker-js/faker";
+import { LeavesPage } from "../pages/LeavesPage.js";
 
 export const test = base.extend({
   sqliteConn: async ({}, use) => {
@@ -38,26 +41,131 @@ export const test = base.extend({
 
     await use(page);
 
-    // cerrar contexto al terminar el test
     // await context.close();
   },
 
-  
+  solicitudesTemporales: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const leaveRequestPage = new LeaveRequestPage(loggedInPage);
+    const requestsPage = new RequestsPage(loggedInPage);
+
+    for (let i = 0; i < 10; i++) {
+      await home.goToCreateLeave();
+      await leaveRequestPage.selectLeaveType("special leave");
+      await leaveRequestPage.selectStartDate();
+      await leaveRequestPage.selectEndDate();
+      await leaveRequestPage.setCause("Solicitud de prueba para buscador");
+      await leaveRequestPage.submitRequested();
+    }
+
+    await use();    
+  },
+
+  solicitudesTemporalesEstadoPlanned: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const leaveRequestPage = new LeaveRequestPage(loggedInPage);
+    const leavesPage = new LeavesPage(loggedInPage);
+
+    const causas = []; 
+
+    for (let i = 0; i < 11; i++) {
+      await home.goToCreateLeave();
+      await leaveRequestPage.selectLeaveType("special leave");
+      await leaveRequestPage.selectStartDate();
+      await leaveRequestPage.selectEndDate();
+      const causa = await leaveRequestPage.setCause("Solicitud " + Date.now().toString());
+      causas.push(causa);
+      await leaveRequestPage.submitPlanned();
+    }
+
+    await use(causas);    
+
+    for (const causa of causas) {
+      await home.goToListOfLeaveRequests();
+      await leavesPage.searchLeave(causa);
+      await leavesPage.deleteFirstLeave();
+    }
+  },
+
+  solicitudTemporalEstadoPlanned: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const leaveRequestPage = new LeaveRequestPage(loggedInPage);
+    const leavesPage = new LeavesPage(loggedInPage);
+
+    await home.goToCreateLeave();
+    await leaveRequestPage.selectLeaveType("special leave");
+    await leaveRequestPage.selectStartDate();
+    await leaveRequestPage.selectEndDate();
+    const causa = await leaveRequestPage.setCause("Solicitud " + Date.now().toString());
+    await leaveRequestPage.submitPlanned();
+
+    await use(causa);    
+
+    await home.goToListOfLeaveRequests();
+    await leavesPage.searchLeave(causa);
+    await leavesPage.deleteFirstLeave();
+  },
+
+  solicitudTemporal: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const leaveRequestPage = new LeaveRequestPage(loggedInPage);
+    const requestsPage = new RequestsPage(loggedInPage);
+
+    // await loggedInPage.goto("http://localhost/leaves/create");
+    await home.goToCreateLeave();
+
+    await leaveRequestPage.selectLeaveType("special leave");
+    await leaveRequestPage.selectStartDate();
+    await leaveRequestPage.selectEndDate();
+    await leaveRequestPage.setCause("Solicitud de prueba para buscador");
+    await leaveRequestPage.submitRequested();
+
+    await use();
+    await home.goToRequests();
+    await requestsPage.acceptFirstRequest();
+  },
+
+  solicitudesTemporalesAceptadaYRechazada: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const leaveRequestPage = new LeaveRequestPage(loggedInPage);
+    const requestsPage = new RequestsPage(loggedInPage);
+
+    // await loggedInPage.goto("http://localhost/leaves/create");
+    await home.goToCreateLeave();
+
+    await leaveRequestPage.selectLeaveType("special leave");
+    await leaveRequestPage.selectStartDate();
+    await leaveRequestPage.selectEndDate();
+    await leaveRequestPage.setCause("Solicitud de prueba para buscador");
+    await leaveRequestPage.submitRequested();
+    await home.goToRequests();
+    await requestsPage.acceptFirstRequest();
+
+    await home.goToCreateLeave();
+    await leaveRequestPage.selectLeaveType("special leave");
+    await leaveRequestPage.selectStartDate();
+    await leaveRequestPage.selectEndDate();
+    await leaveRequestPage.setCause("Solicitud de prueba para buscador");
+    await leaveRequestPage.submitRequested();
+    await home.goToRequests();
+    await requestsPage.rejectFirstRequest();
+
+    await use();
+
+  },
 
   createdRequest: async ({ loggedInPage }, use) => {
     const home = new HomePage(loggedInPage);
     const leaveRequestPage = new LeaveRequestPage(loggedInPage);
     const requestsPage = new RequestsPage(loggedInPage);
 
-    await loggedInPage.goto("http://localhost/leaves/create");
-
+    await home.goToCreateLeave();
     await leaveRequestPage.selectLeaveType("paid leave");
     await leaveRequestPage.selectStartDate();
     await leaveRequestPage.selectEndDate();
-    await leaveRequestPage.setCause("Motivo automático de prueba5");
+    await leaveRequestPage.setCause("Solicitud de prueba");
     await leaveRequestPage.submitRequested();
 
-    await loggedInPage.waitForSelector("#flashbox");
     await use();
   },
 
@@ -76,12 +184,12 @@ export const test = base.extend({
       password: user.password
     });
 
-    // espera que se muestre en la tabla (última página)
     // await loggedInPage.waitForSelector(`text=${user.login}`);
 
-    // pasamos el login al test
     await use(user.login);
   },
+
+  
 
   nuevoUsuarioDePrueba: async ({ loggedInPage }, use) => {
     const home = new HomePage(loggedInPage);
@@ -98,10 +206,8 @@ export const test = base.extend({
       password: user.password
     });
 
-    // espera que se muestre en la tabla (última página)
     // await loggedInPage.waitForSelector(`text=${user.login}`);
 
-    // pasamos el login al test
     await use(user.login);
   },
 
@@ -190,14 +296,6 @@ export const test = base.extend({
     } catch (err) {
       console.warn(`no se pudo eliminar ${user.login}:`, err.message);
     }
-
-    // try {
-    //   console.log(`eliminando usuario temporal: ${login}`);
-    //   await usersPage.deleteUserByLogin(login);
-    // } catch (err) {
-    //   console.warn(`no se pudo eliminar ${login}: ${err.message}`);
-    // }
-
   },
 
   cleanupUltimoUsuario: async ({ loggedInPage }, use) => {
@@ -208,7 +306,6 @@ export const test = base.extend({
 
     console.log("iniciando limpieza de último usuario creado");
     try {
-      // // ir a la lista de usuarios
       // await home.goToListUsers();
       // await usersPage.changeEntriesTo(25);
 
@@ -264,4 +361,121 @@ export const test = base.extend({
     await use();
   },
 
+  usuariosParaPaginacion: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const createUser = new CreateUserPage(loggedInPage);
+    const usersPage = new UsersPage(loggedInPage);
+
+    const createdLogins = [];
+
+    for (let i = 0; i < 10; i++) {
+      const user = {
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        login: faker.internet.username().toLowerCase() + "_" + Date.now() + "_" + i,
+        email: faker.internet.email().toLowerCase(),
+        password: faker.internet.password({ length: 8 }),
+      };
+
+      await home.goToCrearUsuario();
+      await createUser.fillForm(user);
+
+      createdLogins.push(user.login);
+    }
+
+    await use();
+
+    // try {
+    //   await home.goToListUsers();
+    //   for (const login of createdLogins) {
+    //     const eliminado = await usersPage.deleteUserByLogin(login);
+
+    //     if (eliminado) {
+    //       await loggedInPage.reload();
+    //       await this.page.keyboard.press('F5');
+    //       await home.goToListUsers();
+
+    //       // await loggedInPage.waitForTimeout(500);
+
+    //       // await loggedInPage.keyboard.down('Control');
+    //       // await loggedInPage.keyboard.press('F5');
+    //       // await loggedInPage.keyboard.press('F5');
+    //       // await loggedInPage.keyboard.up('Control');
+
+    //       await loggedInPage.waitForLoadState("domcontentloaded");
+    //       await loggedInPage.waitForTimeout(800);
+    //     } 
+    //   }
+    // } catch (err) {
+    //   console.warn("Error eliminando usuario de paginación:", err.message);
+    // }
+  },
+
+  horasExtrasParaPaginacion: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const overtimeForm = new OvertimeRequestPage(loggedInPage);
+    const extras = new ExtrasPage(loggedInPage);
+    const overtimePage = new OvertimePage(loggedInPage);
+    
+    
+
+    const solicitudesCreadas = [];
+
+    for (let i = 0; i < 11; i++) {
+      await home.goToCreateOvertime();
+
+      const duration = faker.helpers.arrayElement(["0.125", "0.25", "0.5", "1"]);
+      const reason = `solicitud de horas extra temporal ${faker.word.noun()}_${i}_${Date.now()}`;
+
+      await overtimeForm.selectDate();
+      await overtimeForm.setDuration(duration);
+      await overtimeForm.setReason(reason);
+      await overtimeForm.selectStatus("Requested");
+
+      await overtimeForm.submitRequest();
+
+      solicitudesCreadas.push({ duration, reason });
+      await loggedInPage.waitForSelector("#flashbox");
+    }
+
+    await use();
+
+    // await home.goToOvertime();
+
+    for (let i = 0; i < solicitudesCreadas.length; i++) {
+      await overtimePage.acceptFirstOvertime();
+      await loggedInPage.waitForTimeout(500);
+    }
+
+  },
+
+  solicitudHorasExtrasTemporal: async ({ loggedInPage }, use) => {
+    const home = new HomePage(loggedInPage);
+    const overtimeForm = new OvertimeRequestPage(loggedInPage);
+    const extras = new ExtrasPage(loggedInPage);
+    const overtimePage = new OvertimePage(loggedInPage);
+
+    await home.goToCreateOvertime();
+
+    const duration = faker.helpers.arrayElement(["0.125", "0.25", "0.5", "1"]);
+    const reason = `solicitud de horas extra temporal`;
+
+    await overtimeForm.selectDate();
+    await overtimeForm.setDuration(duration);
+    await overtimeForm.setReason(reason);
+    await overtimeForm.selectStatus("Requested");
+
+    await overtimeForm.submitRequest();
+
+    await loggedInPage.waitForSelector("#flashbox");
+
+    await use();
+
+    await home.goToOvertime();
+
+    await overtimePage.acceptFirstOvertime();
+    await loggedInPage.waitForTimeout(500);
+    
+
+  }
 });

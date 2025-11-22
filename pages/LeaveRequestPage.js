@@ -86,6 +86,7 @@ export class LeaveRequestPage {
 
   async setCause(text) {
     await this.page.fill(this.causeTextarea, text);
+    return text;
   }
 
   async getDuration() {

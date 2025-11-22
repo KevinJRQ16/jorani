@@ -40,6 +40,11 @@ export class OvertimePage {
     this.tableCell = (rowIndex, colIndex) => `${this.overtimeTable} tbody tr:nth-child(${rowIndex + 1}) td:nth-child(${colIndex + 1})`;
   }
 
+  async getInfoTextSearch() {
+    // return await this.page.locator(this.infoText).innerText();
+    return (await this.page.textContent(this.emptyRow)).trim();
+  }
+
   async changeEntriesTo(number) {
     await this.page.selectOption(this.showSelect, number.toString());
     await this.page.waitForTimeout(800);

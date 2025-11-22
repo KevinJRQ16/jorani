@@ -55,7 +55,7 @@ test("@exploratory @positive verificar que todos los filtros estén visibles", a
   }
 });
 
-test("@exploratory @positive verificar que el filtro por tipo de licencia actualice la tabla", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el filtro por tipo de licencia actualice la tabla", async ({ loggedInPage, solicitudTemporal}) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -76,7 +76,7 @@ test("@exploratory @positive verificar que el filtro por tipo de licencia actual
   }
 });
 
-test("@exploratory @positive verificar que se afecten las solicitudes después de desactivar filtro de 'requested'", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que se afecten las solicitudes después de desactivar filtro de 'requested'", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -96,7 +96,7 @@ test("@exploratory @positive verificar que se afecten las solicitudes después d
   }
 });
 
-test("@exploratory @positive verificar que se cierre el modal correctamente al cancelar el rechazo de una solicitud", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que se cierre el modal correctamente al cancelar el rechazo de una solicitud", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -153,7 +153,7 @@ test("@exploratory @positive verificar que se rechace una solicitud exitosamente
   }
 });
 
-test("@exploratory @positive verificar que el botón 'export this list' inicie descarga", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el botón 'export this list' inicie descarga", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -173,7 +173,7 @@ test("@exploratory @positive verificar que el botón 'export this list' inicie d
   }
 });
 
-test("@exploratory @positive verificar que el botón 'all requests' muestre todas las solicitudes", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el botón 'all requests' muestre todas las solicitudes", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -190,7 +190,7 @@ test("@exploratory @positive verificar que el botón 'all requests' muestre toda
   }
 });
 
-test("@exploratory @positive verificar que el botón 'pending requests' filtre solo solicitudes pendientes con estado 'requested'", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el botón 'pending requests' filtre solo solicitudes pendientes con estado 'requested'", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -207,7 +207,7 @@ test("@exploratory @positive verificar que el botón 'pending requests' filtre s
   }
 });
 
-test("@exploratory @positive verificar que el botón 'pending requests' filtre los estados 'requested' y 'cancellation'", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el botón 'pending requests' filtre los estados 'requested' y 'cancellation'", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -235,7 +235,7 @@ test("@exploratory @positive verificar que el botón 'pending requests' filtre l
   }
 });
 
-test("@exploratory @positive verificar que el total de solicitudes coincida con el número mostrado en la tabla", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el total de solicitudes coincida con el número mostrado en la tabla", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -253,7 +253,7 @@ test("@exploratory @positive verificar que el total de solicitudes coincida con 
   }
 });
 
-test("@exploratory @positive verificar que se muestre la información completa de cada solicitud visible en la tabla", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que se muestre la información completa de cada solicitud visible en la tabla", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -271,7 +271,7 @@ test("@exploratory @positive verificar que se muestre la información completa d
   }
 });
 
-test("@exploratory @positive verificar que se navegue correctamente al abrir la primera solicitud", async ({ loggedInPage, createdRequest }) => {
+test("@exploratory @positive verificar que se navegue correctamente al abrir la primera solicitud", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -291,7 +291,7 @@ test("@exploratory @positive verificar que se navegue correctamente al abrir la 
   }
 });
 
-test("@exploratory @positive verificar que se muestre todas las solicitudes de todas las paginas", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que se muestre todas las solicitudes de todas las paginas", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -369,7 +369,7 @@ test("@exploratory @positive verificar que el mensaje se cierre correctamente al
   }
 });
 
-test("@exploratory @negative verificar que al desactivar el filtro 'requested' no aparezca ningún registro de solicitudes", async ({ loggedInPage }) => {
+test("@exploratory @negative verificar que al desactivar el filtro 'requested' no aparezca ningún registro de solicitudes", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -410,7 +410,7 @@ test("@exploratory @negative verificar que se rechace una solicitud exitosamente
   }
 });
 
-test("@exploratory @positive verificar que se pueda exportar luego de aceptar una solicitud", async ({ loggedInPage, createdRequest}) => {
+test("@exploratory @positive verificar que se pueda exportar luego de aceptar una solicitud", async ({ loggedInPage, solicitudTemporal}) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -422,7 +422,6 @@ test("@exploratory @positive verificar que se pueda exportar luego de aceptar un
     const errors = [];
     loggedInPage.on("pageerror", (err) => errors.push(err.message));
 
-    await requestsPage.acceptFirstRequest();
     await requestsPage.exportRequests();
 
     expect(errors).toHaveLength(0);
@@ -434,7 +433,7 @@ test("@exploratory @positive verificar que se pueda exportar luego de aceptar un
   }
 });
 
-test("@exploratory @positive verificar que se muestre el modal de historial al hacer clic en el ícono de historial de una solicitud", async ({ loggedInPage, createdRequest }) => {
+test("@exploratory @positive verificar que se muestre el modal de historial al hacer clic en el ícono de historial de una solicitud", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -457,7 +456,7 @@ test("@exploratory @positive verificar que se muestre el modal de historial al h
   }
 });
 
-test("@exploratory @positive verificar que el selector 'show entries' filtre por 25 solicitudes", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el selector 'show entries' filtre por 25 solicitudes", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -476,7 +475,7 @@ test("@exploratory @positive verificar que el selector 'show entries' filtre por
   }
 });
 
-test("@exploratory @positive verificar que el selector 'show entries' filtre por 50 solicitudes", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el selector 'show entries' filtre por 50 solicitudes", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -495,7 +494,7 @@ test("@exploratory @positive verificar que el selector 'show entries' filtre por
   }
 });
 
-test("@exploratory @positive verificar que el selector 'show entries' filtre por 100 solicitudes", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el selector 'show entries' filtre por 100 solicitudes", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -514,7 +513,7 @@ test("@exploratory @positive verificar que el selector 'show entries' filtre por
   }
 });
 
-test("@exploratory @positive verificar que el buscador permite buscar correctamente una solicitud existente", async ({ loggedInPage }) => {
+test("@exploratory @positive verificar que el buscador permite buscar correctamente una solicitud existente", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 
@@ -532,7 +531,7 @@ test("@exploratory @positive verificar que el buscador permite buscar correctame
   }
 });
 
-test("@exploratory @negative verificar que al buscar solicitud inexistente se muestre un mensaje en fila", async ({ loggedInPage }) => {
+test("@exploratory @negative verificar que al buscar solicitud inexistente se muestre un mensaje en fila", async ({ loggedInPage, solicitudTemporal }) => {
   const home = new HomePage(loggedInPage);
   const requestsPage = new RequestsPage(loggedInPage);
 

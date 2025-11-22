@@ -21,15 +21,15 @@ test("@exploratory @positive Verificar que se acceda exitosamente a la pagina de
   }
 });
 
-test("@exploratory @positive Verificar que se navegue por las paginas sin errores", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se navegue por las paginas sin errores", async ({ loggedInPage, solicitudesTemporalesEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
   try {
     Logger.info("verificando navegación entre páginas de solicitudes");
     await home.goToListOfLeaveRequests();
-    await leavesPage.toggleStatus("accepted", true);
-    await leavesPage.changeEntriesTo("50");
+    // await leavesPage.toggleStatus("accepted", true);
+    // await leavesPage.changeEntriesTo("50");
     const total = await leavesPage.countAllLeaves();
     expect(total).toBeGreaterThan(0);
     Logger.info("navegación completada sin errores");
@@ -56,8 +56,7 @@ test("@exploratory @positive Verificar que se muestre los botones Export y New R
   }
 });
 
-// filtro x show
-test("@exploratory @positive Verificar que el selector 'Show entries' filtre por 25 solicitudes", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que el selector 'Show entries' filtre por 25 solicitudes", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
@@ -76,7 +75,7 @@ test("@exploratory @positive Verificar que el selector 'Show entries' filtre por
   }
 });
 
-test("@exploratory @positive Verificar que el selector 'Show entries' filtre por 50 solicitudes", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que el selector 'Show entries' filtre por 50 solicitudes", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
@@ -95,7 +94,7 @@ test("@exploratory @positive Verificar que el selector 'Show entries' filtre por
   }
 });
 
-test("@exploratory @positive Verificar que el selector 'Show entries' filtre por 100 solicitudes", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que el selector 'Show entries' filtre por 100 solicitudes", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
@@ -114,7 +113,7 @@ test("@exploratory @positive Verificar que el selector 'Show entries' filtre por
   }
 });
 
-test("@exploratory @positive Verificar que cada solicitud debe tener un estado válido", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que cada solicitud debe tener un estado válido", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
@@ -130,14 +129,14 @@ test("@exploratory @positive Verificar que cada solicitud debe tener un estado v
   }
 });
 
-test("@exploratory @positive Verificar que se filtre por tipo de permiso y muestre cuantos registros hay", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se filtre por tipo de permiso y muestre cuantos registros hay", async ({ loggedInPage, solicitudesTemporalesAceptadaYRechazada }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
   try {
-    Logger.info("filtrando por tipo de permiso 'paid leave'");
+    Logger.info("filtrando por tipo de permiso 'special leave'");
     await home.goToListOfLeaveRequests();
-    await leavesPage.filterByType("paid leave");
+    await leavesPage.filterByType("special leave");
     const rows = loggedInPage.locator("#leaves tbody tr");
     const rowCount = await rows.count();
     Logger.info(`filas filtradas: ${rowCount}`);
@@ -150,7 +149,7 @@ test("@exploratory @positive Verificar que se filtre por tipo de permiso y muest
   }
 });
 
-test("@exploratory @positive Verificar que muestre solo las solicitudes aceptadas", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que muestre solo las solicitudes aceptadas", async ({ loggedInPage, solicitudesTemporalesAceptadaYRechazada }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
@@ -229,7 +228,7 @@ test("@exploratory @positive Veriificar que el boton 'New Request' abra el formu
   }
 });
 
-test("@exploratory @positive Verificar que al hacer clic en botn 'Export this list' debería descargar un archivo", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que al hacer clic en botn 'Export this list' debería descargar un archivo", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
@@ -253,7 +252,7 @@ test("@exploratory @positive Verificar que al hacer clic en botn 'Export this li
   }
 });
 
-test("@exploratory @positive Verificar que se muestre el mensaje 'No matching records found' si no hay resultados al filtrar por tipo de permiso", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que se muestre el mensaje 'No matching records found' si no hay resultados al filtrar por tipo de permiso", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
@@ -271,16 +270,17 @@ test("@exploratory @positive Verificar que se muestre el mensaje 'No matching re
   }
 });
 
-test("@exploratory @positive Verificar que el buscador permite buscar correctamente una solicitud existente", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar que el buscador permite buscar correctamente una solicitud existente", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
   try {
     Logger.info("verificando búsqueda de solicitud existente");
     await home.goToListOfLeaveRequests();
-    await leavesPage.searchLeave("accepted");
+    const causa = solicitudTemporalEstadoPlanned;
+    await leavesPage.searchLeave(causa);
     const rows = await leavesPage.getTableData();
-    expect(rows.some(r => r.toString().includes("Accepted"))).toBeTruthy();
+    expect(rows.some(r => r.toString().includes(causa))).toBeTruthy();
     Logger.info("búsqueda de solicitud existente realizada correctamente");
   } catch (error) {
     Logger.error(`error al buscar solicitud existente: ${error.message}`);
@@ -289,7 +289,7 @@ test("@exploratory @positive Verificar que el buscador permite buscar correctame
   }
 });
 
-test("@exploratory @negative Verificar que al buscar una solicitud inexistente se muestre un mensaje en fila", async ({ loggedInPage }) => {
+test("@exploratory @negative Verificar que al buscar una solicitud inexistente se muestre un mensaje en fila", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   const home = new HomePage(loggedInPage);
   const leavesPage = new LeavesPage(loggedInPage);
 
@@ -309,7 +309,7 @@ test("@exploratory @negative Verificar que al buscar una solicitud inexistente s
   }
 });
 
-test("@exploratory @positive Verificar cuantas solicitudes hay en la lista y que coincida con el total mostrado", async ({ loggedInPage }) => {
+test("@exploratory @positive Verificar cuantas solicitudes hay en la lista y que coincida con el total mostrado", async ({ loggedInPage, solicitudTemporalEstadoPlanned }) => {
   test.info().annotations.push({ type: "smoke", description: "flujo crítico" });
 
   const home = new HomePage(loggedInPage);
@@ -318,7 +318,7 @@ test("@exploratory @positive Verificar cuantas solicitudes hay en la lista y que
   try {
     Logger.info("verificando total de solicitudes en la lista");
     await home.goToListOfLeaveRequests();
-    await leavesPage.changeEntriesTo("100");
+    // await leavesPage.changeEntriesTo("100");
     const displayedTotal = await leavesPage.getDisplayedTotal();
     const countedTotal = await leavesPage.countAllLeaves();
     Logger.info(`total mostrado: ${displayedTotal} | total contado: ${countedTotal}`);

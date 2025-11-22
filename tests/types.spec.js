@@ -51,7 +51,7 @@ test("@exploratory @positive verificar que se pueda editar un tipo", async ({ lo
   try {
     Logger.info("editando tipo de permiso");
     await home.goToLeaveTypes();
-    await leaveTypes.editByIndex(7, "PermisoEdit", "PE");
+    await leaveTypes.editByIndex(2, "maternity leave", "ml");
 
     const hasMessage = await leaveTypes.hasSuccessMessage();
     expect(hasMessage).toBeTruthy();
@@ -70,7 +70,7 @@ test("@exploratory @negative verificar que no se pueda crear un tipo duplicado",
   try {
     Logger.info("intentando crear tipo de permiso duplicado");
     await home.goToLeaveTypes();
-    await leaveTypes.createLeaveType("congreso", "DT");
+    await leaveTypes.createLeaveType("paternity leave", "DT");
 
     const hasDuplicate = await leaveTypes.hasDuplicateModal();
     expect(hasDuplicate).toBeTruthy();

@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 export class UsersPage {
   constructor(page) {
     this.page = page;
@@ -53,7 +54,7 @@ export class UsersPage {
 
   async searchUser(term) {
     await this.page.fill(this.searchInput, term);
-    await this.page.waitForTimeout(1000); // pequeño delay para el refresco
+    await this.page.waitForTimeout(1000); 
   }
 
   async getRowCount() {
@@ -133,212 +134,362 @@ export class UsersPage {
     return this.page.locator(`${this.tableRows}:has(td:has-text("${login}"))`);
   }
 
-  async deleteUserByLogin(login) {
-    const userRow = await this.findUserRowByLogin(login);
-    if (await userRow.count() === 0) {
-      throw new Error(`No se encontró el usuario con login: ${login}`);
+  async resetPasswordByIndex(index = 1) {
+    const userRows = this.page.locator('table tbody tr');
+    const count = await userRows.count();
+
+    if (count === 0) {
+      throw new Error("No hay usuarios en la lista.");
     }
 
-    const deleteButton = userRow.locator('a.confirm-delete');
-    await deleteButton.click();
+    if (index >= count) {
+      throw new Error(`Solo hay ${count} usuarios, índice ${index} fuera de rango.`);
+    }
 
-    await this.page.waitForSelector(this.deleteModal, { state: "visible" });
-    await this.page.click(this.deleteConfirmButton);
+    const userRow = userRows.nth(index);
+    const resetButton = userRow.locator('a[title="reset password"]');
+    await resetButton.click();
+
+    await this.page.waitForSelector(this.resetPwdModal, { state: "visible" });
     await this.page.waitForTimeout(1000);
   }
 
-async resetPasswordByIndex(index = 1) {
-  const userRows = this.page.locator('table tbody tr');
-  const count = await userRows.count();
+  async changePasswordByIndex(index = 1, nuevaPassword = "Nueva123!") {
+    const userRows = this.page.locator("table tbody tr");
+    const count = await userRows.count();
 
-  if (count === 0) {
-    throw new Error("No hay usuarios en la lista.");
-  }
-
-  if (index >= count) {
-    throw new Error(`Solo hay ${count} usuarios, índice ${index} fuera de rango.`);
-  }
-
-  const userRow = userRows.nth(index);
-  const resetButton = userRow.locator('a[title="reset password"]');
-  await resetButton.click();
-
-  await this.page.waitForSelector(this.resetPwdModal, { state: "visible" });
-  await this.page.waitForTimeout(1000);
-}
-
-async changePasswordByIndex(index = 1, nuevaPassword = "Nueva123!") {
-  const userRows = this.page.locator("table tbody tr");
-  const count = await userRows.count();
-
-  if (count === 0) {
-    throw new Error("No hay usuarios en la lista.");
-  }
-
-  if (index >= count) {
-    throw new Error(`Solo hay ${count} usuarios, índice ${index} fuera de rango.`);
-  }
-
-  const userRow = userRows.nth(index);
-  const resetButton = userRow.locator('a[title="reset password"]');
-  await resetButton.click();
-
-  await this.page.waitForSelector(this.resetPwdModal, { state: "visible" });
-
-  await this.page.fill('input[name="password"]', nuevaPassword);
-  // await this.page.fill('input[name="confirmPassword"]', nuevaPassword);
-
-  // await this.page.click('button[type="submit"]');
-  await this.page.click(`${this.resetPwdModal} #send`);
-}
-
-  async deleteUserByLogin(login) {
-  if (login.toLowerCase() === "admin") {
-    throw new Error("No se puede eliminar al usuario administrador.");
-  }
-
-  let previousTable = "";
-  let pageIndex = 1;
-
-  while (true) {
-    const currentTable = await this.page.locator("table").innerHTML();
-
-    // Buscar el usuario en la página actual
-    const userRow = await this.findUserRowByLogin(login);
-    if (await userRow.count() > 0) {
-      const deleteButton = userRow.locator("a.confirm-delete");
-      await deleteButton.click();
-
-      await this.page.waitForSelector(this.deleteModal, { state: "visible" });
-      await this.page.click(`${this.deleteModal} #action-delete`);
-      await this.page.waitForSelector(this.deleteModal, { state: "hidden" });
-      await this.page.waitForTimeout(500);
-      console.log(`usuario "${login}" eliminado en la página ${pageIndex}`);
-      return;
+    if (count === 0) {
+      throw new Error("no hay usuarios en la lista.");
     }
 
-    const nextButton = this.page.locator("a.next");
-    if ((await nextButton.count()) === 0) break;
-
-    await nextButton.click();
-    await this.page.waitForTimeout(800); // darle tiempo a recargar
-
-    const newTable = await this.page.locator("table").innerHTML();
-    if (newTable === currentTable || newTable === previousTable) {
-      console.log("ultima página alcanzada.");
-      break;
+    if (index >= count) {
+      throw new Error(`solo hay ${count} usuarios, índice ${index} fuera de rango.`);
     }
 
-    previousTable = currentTable;
-    pageIndex++;
+    const userRow = userRows.nth(index);
+    const resetButton = userRow.locator('a[title="reset password"]');
+    await resetButton.click();
+
+    await this.page.waitForSelector(this.resetPwdModal, { state: "visible" });
+
+    await this.page.fill('input[name="password"]', nuevaPassword);
+    // await this.page.fill('input[name="confirmPassword"]', nuevaPassword);
+
+    // await this.page.click('button[type="submit"]');
+    await this.page.click(`${this.resetPwdModal} #send`);
   }
 
-  throw new Error(`No se encontró el usuario con login: ${login}`);
-}
+    async deleteUserByLogin(login) {
+    if (login.toLowerCase() === "admin") {
+      throw new Error("no se puede eliminar al usuario administrador.");
+    }
 
-async userExists(login) {
-  let previousTable = "";
+    let previousTable = "";
+    let pageIndex = 1;
 
-  while (true) {
-    const userRow = await this.findUserRowByLogin(login);
-    if (await userRow.count() > 0) return true;
+    while (true) {
+      const currentTable = await this.page.locator("table").innerHTML();
 
-    const nextButton = this.page.locator("a.next");
-    if ((await nextButton.count()) === 0) break;
+      const userRow = await this.findUserRowByLogin(login);
+      if (await userRow.count() > 0) {
+        await this.page.keyboard.press("F5");
+        await this.page.waitForLoadState("domcontentloaded");
+        await this.page.waitForTimeout(300);
 
-    await nextButton.click();
-    await this.page.waitForTimeout(800);
+        const deleteButton = userRow.locator("a.confirm-delete");
+        await deleteButton.click();
 
-    const newTable = await this.page.locator("table").innerHTML();
-    if (newTable === previousTable) break;
-    previousTable = newTable;
+        await this.page.waitForSelector(this.deleteModal, { state: "visible" });
+        await this.page.click(`${this.deleteModal} #action-delete`);
+        await this.page.waitForSelector(this.deleteModal, { state: "hidden" });
+        await this.page.waitForTimeout(500);
+        console.log(`usuario "${login}" eliminado en la página ${pageIndex}`);
+        return;
+      }
+
+      const nextButton = this.page.locator("a.next");
+      if ((await nextButton.count()) === 0) break;
+
+      await nextButton.click();
+      await this.page.waitForTimeout(800); 
+
+      const newTable = await this.page.locator("table").innerHTML();
+      if (newTable === currentTable || newTable === previousTable) {
+        console.log("ultima página alcanzada.");
+        break;
+      }
+
+      previousTable = currentTable;
+      pageIndex++;
+    }
+
+    throw new Error(`no se encontró el usuario con login: ${login}`);
   }
 
-  return false;
-}
+  async resetPasswordByLogin(login, nuevaPassword = "Nueva123!") {
+    let previousTable = "";
 
-  async goToEditUserByIndex(index = 1) { // índice 1 = segundo usuario
-  const userRows = this.page.locator("table tbody tr");
-  const count = await userRows.count();
+    while (true) {
+      const userRow = await this.findUserRowByLogin(login);
 
-  if (count === 0) throw new Error("No hay usuarios en la lista.");
-  if (index >= count) throw new Error(`Solo hay ${count} usuarios, índice ${index} fuera de rango.`);
+      if (await userRow.count() > 0) {
+        const resetButton = userRow.locator('a[title="reset password"]');
 
-  const userRow = userRows.nth(index);
+        if ((await resetButton.count()) === 0) {
+          throw new Error(`El usuario "${login}" existe pero NO tiene botón de reset.`);
+        }
 
-  const editButton = userRow.locator('a[title="edit user details"]');
-  await editButton.waitFor({ state: "visible", timeout: 5000 });
-  await editButton.click();
-
-  await this.page.waitForURL("**/users/edit/**", { timeout: 10000 });
-  await this.page.waitForTimeout(500);
-}
-
-async toggleActiveByIndex(index = 1) {
-  const userRows = this.page.locator("table tbody tr");
-  const count = await userRows.count();
-
-  if (count === 0) {
-    throw new Error("No hay usuarios en la lista.");
-  }
-
-  if (index >= count) {
-    throw new Error(`Solo hay ${count} usuarios, índice ${index} fuera de rango.`);
-  }
-
-  const userRow = userRows.nth(index);
-
-  const activeButton = userRow.locator('a[title="Active"]');
-  const inactiveButton = userRow.locator('a[title="Inactive"]');
-
-  if (await activeButton.count()) {
-    console.log("Usuario actualmente activo → se desactivará");
-    await activeButton.click();
-  } else if (await inactiveButton.count()) {
-    console.log("usuario actualmente inactivo → se activara");
-    await inactiveButton.click();
-  } else {
-    throw new Error("no se encontro el boton Active/Inactive en la fila");
-  }
-  await this.page.waitForTimeout(1000);
-}
+        await resetButton.click();
+        await this.page.waitForSelector(this.resetPwdModal, { state: "visible", timeout: 10000 });
+        await this.page.fill(`${this.resetPwdModal} input[name="password"]`, nuevaPassword);
+        await this.page.click(`${this.resetPwdModal} #send`);
+        await this.page.waitForSelector(this.resetPwdModal, { state: "hidden", timeout: 10000 });
 
 
-async eliminarUltimoUsuario() {
-  console.log("Buscando el último usuario...");
+        console.log(`contraseña reseteada para el usuario "${login}"`);
+        return true;
+      }
 
-  for (let i = 0; i < 40; i++) { 
-    const nextButton = this.page.locator("a.next");
-    if (!(await nextButton.isVisible())) break;
-    const disabled = await nextButton.getAttribute("class");
-    if (disabled && disabled.includes("disabled")) break; 
-    await nextButton.click();
-    await this.page.waitForTimeout(800);
-  }
+      const nextButton = this.page.locator("a.next");
+      if ((await nextButton.count()) === 0) break;
 
-  const rows = this.page.locator("table tbody tr");
-  const count = await rows.count();
+      await nextButton.click();
+      await this.page.waitForTimeout(800);
 
-  if (count === 0) {
-    console.log("no hay usuarios para eliminar.");
+      const newTable = await this.page.locator("table").innerHTML();
+      if (newTable === previousTable) break;
+      previousTable = newTable;
+    }
+
+    console.warn(`No se encontró el usuario con login: ${login}`);
     return false;
   }
 
-  const lastRow = rows.nth(count - 1);
-  const login = await lastRow.locator("td:nth-child(3)").innerText();
-  console.log(`eliminando último usuario con login: ${login}`);
+  async resetPasswordByIndex(index) {
+    const row = this.page.locator(`${this.tableRows}`).nth(index);
+    await row.locator(this.resetPasswordButton).click();
 
-  const deleteButton = lastRow.locator("a.confirm-delete");
-  await deleteButton.click();
+    await this.waitForTableStability();
 
-  await this.page.waitForSelector(this.deleteModal, { state: "visible", timeout: 10000 });
-  await this.page.click(`${this.deleteModal} #action-delete`);
-  await this.page.waitForSelector(this.deleteModal, { state: "hidden", timeout: 10000 });
+    await this.page.waitForSelector(this.resetPwdModal, { state: "visible" });
+  }
 
-  console.log("usuario eliminado correctamente.");
-  return true;
-}
+  async waitForTableStability() {
+    await this.page.waitForSelector(this.tableRows, { state: "visible" });
+    await this.page.waitForTimeout(400);
+    await this.page.waitForLoadState("domcontentloaded");
+  }
+
+  async openResetPasswordModal(login) {
+    const row = this.page.locator(
+      `${this.tableRows}:has(td:has-text("${login}"))`
+    );
+
+    await expect(row).toHaveCount(1, {
+      message: `No se encontró el usuario con login: ${login}`
+    });
+
+    await row.locator('a[title="reset password"]').click();
+
+    await this.page.waitForSelector(this.resetPwdModal, { state: "visible" });
+  }
+
+  async goToEditUserByLogin(login) {
+    let previousTable = "";
+
+    while (true) {
+      const row = this.page.locator(
+        `${this.tableRows}:has(td:has-text("${login}"))`
+      );
+
+      if (await row.count() > 0) {
+        const editButton = row.locator('a[title="edit user details"]');
+
+        await editButton.waitFor({ state: "visible", timeout: 8000 });
+        await editButton.click();
+
+        // await this.page.waitForURL("**/users/edit/**", { timeout: 10000 });
+        return;
+      }
+
+      const nextButton = this.page.locator("#users_next:not(.disabled)");
+
+      if (await nextButton.count() === 0) {
+        throw new Error(`No se encontró el usuario con login: ${login}`);
+      }
+
+      await nextButton.click();
+      await this.page.waitForTimeout(800);
+
+      const newTable = await this.page.locator("table").innerHTML();
+      if (newTable === previousTable) {
+        throw new Error(`No se encontró el usuario con login: ${login}`);
+      }
+
+      previousTable = newTable;
+    }
+  }
+
+  async userExists(login) {
+    let previousTable = "";
+
+    while (true) {
+      const userRow = await this.findUserRowByLogin(login);
+      if (await userRow.count() > 0) return true;
+
+      const nextButton = this.page.locator("a.next");
+      if ((await nextButton.count()) === 0) break;
+
+      await nextButton.click();
+      await this.page.waitForTimeout(800);
+
+      const newTable = await this.page.locator("table").innerHTML();
+      if (newTable === previousTable) break;
+      previousTable = newTable;
+    }
+
+    return false;
+  }
+
+  async goToEditUserByIndex(index = 1) { 
+    const userRows = this.page.locator("table tbody tr");
+    const count = await userRows.count();
+
+    if (count === 0) throw new Error("No hay usuarios en la lista.");
+    if (index >= count) throw new Error(`Solo hay ${count} usuarios, índice ${index} fuera de rango.`);
+
+    const userRow = userRows.nth(index);
+
+    const editButton = userRow.locator('a[title="edit user details"]');
+    await editButton.waitFor({ state: "visible", timeout: 5000 });
+    await editButton.click();
+
+    await this.page.waitForURL("**/users/edit/**", { timeout: 10000 });
+    await this.page.waitForTimeout(500);
+  }  
+
+  async handleUnexpectedAjaxError() {
+    const errorModal = this.page.locator('.bootbox.modal.in:has-text("Unexpected Ajax Error")');
+
+    if (await errorModal.isVisible()) {
+      console.warn("se detectó el modal 'Unexpected Ajax Error' — cerrándolo");
+
+      const okButton = errorModal.locator('a.btn-primary');
+      await okButton.click();
+
+      await this.page.waitForTimeout(500);
+      return true;
+    }
+
+    return false;
+  }
+
+  async toggleActiveByIndex(index = 1) {
+    const userRows = this.page.locator("table tbody tr");
+    const count = await userRows.count();
+
+    if (count === 0) {
+      throw new Error("No hay usuarios en la lista.");
+    }
+
+    if (index >= count) {
+      throw new Error(`Solo hay ${count} usuarios, índice ${index} fuera de rango.`);
+    }
+
+    const userRow = userRows.nth(index);
+
+    const activeButton = userRow.locator('a[title="Active"]');
+    const inactiveButton = userRow.locator('a[title="Inactive"]');
+
+    if (await activeButton.count()) {
+      console.log("Usuario actualmente activo → se desactivará");
+      await activeButton.click();
+    } else if (await inactiveButton.count()) {
+      console.log("usuario actualmente inactivo → se activara");
+      await inactiveButton.click();
+    } else {
+      throw new Error("no se encontro el boton Active/Inactive en la fila");
+    }
+    await this.page.waitForTimeout(1000);
+  }
 
 
+  async eliminarUltimoUsuario() {
+    console.log("Buscando el último usuario...");
+
+    for (let i = 0; i < 40; i++) { 
+      const nextButton = this.page.locator("a.next");
+      if (!(await nextButton.isVisible())) break;
+      const disabled = await nextButton.getAttribute("class");
+      if (disabled && disabled.includes("disabled")) break; 
+      await nextButton.click();
+      await this.page.waitForTimeout(800);
+    }
+
+    const rows = this.page.locator("table tbody tr");
+    const count = await rows.count();
+
+    if (count === 0) {
+      console.log("no hay usuarios para eliminar.");
+      return false;
+    }
+
+    const lastRow = rows.nth(count - 1);
+    const login = await lastRow.locator("td:nth-child(3)").innerText();
+    console.log(`eliminando último usuario con login: ${login}`);
+
+    const deleteButton = lastRow.locator("a.confirm-delete");
+    await deleteButton.click();
+
+    await this.page.waitForSelector(this.deleteModal, { state: "visible", timeout: 10000 });
+    await this.page.click(`${this.deleteModal} #action-delete`);
+    await this.page.waitForSelector(this.deleteModal, { state: "hidden", timeout: 10000 });
+
+    console.log("usuario eliminado correctamente.");
+    return true;
+  }
+
+  async toggleActiveByLogin(login) {
+    let previousTable = "";
+
+    while (true) {
+      const row = this.page.locator(
+        `${this.tableRows}:has(td:has-text("${login}"))`
+      );
+
+      if (await row.count() > 0) {
+        const activeButton = row.locator('a[title="Active"]');
+        const inactiveButton = row.locator('a[title="Inactive"]');
+
+        if (await activeButton.count()) {
+          console.log(`usuario "${login}" → activo → se desactivará`);
+          await activeButton.click();
+        } else if (await inactiveButton.count()) {
+          console.log(`usuario "${login}" → inactivo → se activará`);
+          await inactiveButton.click();
+        } else {
+          throw new Error(`El usuario ${login} existe pero NO tiene botón Active/Inactive`);
+        }
+
+        await this.page.waitForTimeout(700);
+        return true;
+      }
+
+      const nextButton = this.page.locator("#users_next:not(.disabled)");
+
+      if ((await nextButton.count()) === 0) {
+        throw new Error(`No se encontró el usuario con login: ${login}`);
+      }
+
+      await nextButton.click();
+      await this.page.waitForTimeout(800);
+
+      const newTable = await this.page.locator("table").innerHTML();
+      if (newTable === previousTable)
+        throw new Error(`No se encontró el usuario con login: ${login}`);
+
+      previousTable = newTable;
+    }
+  }
 
 }
