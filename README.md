@@ -66,6 +66,30 @@ allure serve allure-results
 
 
 
+## Visualización del reporte Allure en Github Actions
+
+### Instalar Allure CLI en Windows, 
+
+#### Abrir un CMD y ejecutar:
+npm install -g allure-commandline
+
+#### Descargar los artefactos desde GitHub Actions
+
+#### Ir a GitHub → Actions
+
+#### Seleccionar la ejecución del workflow
+
+#### En Artifacts, descargar allure-results.zip
+
+#### Descomprimir el archivo descargado
+
+#### Dentro se encontra las evidencias generadas por los tests ejecutados en GitHub Actions
+
+#### Visualizar el reporte Allure localmente
+
+#### Ingresar mediante un CMD al directorio descomprimido y ejecutar:
+allure serve .
+
 
 
 
