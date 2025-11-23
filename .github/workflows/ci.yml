@@ -1,0 +1,54 @@
+name: Run Playwright Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout framework
+      uses: actions/checkout@v4
+
+    - name: Checkout Jorani
+      uses: actions/checkout@v4
+      with:
+        repository: bbalet/jorani
+        path: jorani
+
+    - name: Levantar Jorani con Docker
+      run: |
+        cd jorani
+        docker compose up -d
+
+    - name: Instalar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Instalar dependencias
+      run: npm install
+
+    - name: Instalar Playwright
+      run: npx playwright install --with-deps
+
+    - name: Ejecutar pruebas
+      run: npx playwright test --workers=1
+
+    - name: Instalar Allure CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openjdk-11-jre
+        npm install -g allure-commandline --save-dev
+
+    - name: Generar Allure Report
+      run: allure generate allure-results --clean -o allure-report
+
+    - name: Subir Allure Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: allure-report
